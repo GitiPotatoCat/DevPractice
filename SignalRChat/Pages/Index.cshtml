@@ -1,0 +1,78 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Chat Room";
+}
+
+<div class="container-fluid vh-100 d-flex flex-column">
+    <div class="row flex-grow-1">
+        <!-- Online Users Sidebar -->
+        <div class="col-md-3 col-lg-2 bg-light border-end p-3">
+            <h5 class="mb-3">Online Users</h5>
+            <div class="online-users-list" id="onlineUsersList">
+                <!-- Online users will be populated here -->
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="col-md-9 col-lg-10 d-flex flex-column p-0">
+            <!-- User Join Area -->
+            <div class="join-area p-4 text-center" id="joinArea">
+                <h2 class="mb-4">Join the Chat</h2>
+                <div class="row justify-content-center">
+                    <div class="col-sm-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="userInput" placeholder="Your name">
+                            <label for="userInput">Your Name</label>
+                        </div>
+                        <button class="btn btn-primary btn-lg" id="joinButton">Join Chat</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Area (initially hidden) -->
+            <div class="chat-area d-none h-100 d-flex flex-column" id="chatArea">
+                <!-- Chat Header -->
+                <div class="chat-header p-3 bg-light border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Chat Room</h4>
+                        <span class="badge bg-success" id="connectionStatus">Connected</span>
+                    </div>
+                </div>
+
+                <!-- Messages Area -->
+                <div class="messages-container flex-grow-1 p-3 overflow-auto" id="messagesContainer">
+                    <div class="messages-list" id="messagesList">
+                        <!-- Messages will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator px-3 py-2 border-top d-none" id="typingIndicator">
+                    <small class="text-muted"><em>Someone is typing...</em></small>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-area p-3 border-top">
+                    <form id="messageForm" class="d-flex gap-2">
+                        <div class="flex-grow-1">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="messageInput" placeholder="Type your message">
+                                <label for="messageInput">Type your message</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary px-4" id="sendButton" disabled>
+                            <i class="bi bi-send"></i> Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="~/css/chat.css">
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
