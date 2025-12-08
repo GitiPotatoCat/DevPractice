@@ -1,0 +1,19 @@
+﻿@page
+@model FileWeb.Pages.UploadModel
+@{
+    ViewData["Title"] = "Upload";
+}
+
+<h2>Upload a file</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <button type="submit">Upload</button>
+</form>
+
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p>@Model.Message</p>    
+}
+
