@@ -7,8 +7,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
-# Visual Studio
+# Visual Studio and VsCode
 .vs/
+.vscode/
 
 # Build results
 [Dd]ebug/
@@ -56,3 +57,31 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 .fake
+
+
+############################################
+# Node / Angular (IMPORTANT)
+############################################
+node_modules/
+**/node_modules/   # Covers nested Angular or multiple apps
+dist/
+.angular/
+
+############################################
+# ASP.NET Core
+############################################
+bin/
+obj/
+
+
+############################################
+# Logs
+############################################
+*.log
+
+############################################
+# Environment / Secrets
+############################################
+.env
+appsettings.Development.json
+``
