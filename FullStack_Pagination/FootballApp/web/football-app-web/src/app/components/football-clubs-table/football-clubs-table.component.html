@@ -1,0 +1,214 @@
+<div class="fc-table-shell">
+    <!-- Status banner: error takes priority. A first-load loading banner
+       appears only when there are no rows yet; refetches use the in-table
+       overlay spinner instead so the layout never jumps. -->
+    @if (errorMessage(); as msg) {
+    <div class="fc-status fc-status--error" role="alert">
+        <span class="fc-status__icon" aria-hidden="true">⚠</span>
+        <span class="fc-status__msg">{{ msg }}</span>
+        <button type="button" class="fc-status__retry" (click)="retry()" [disabled]="isLoading()">
+            Retry
+        </button>
+    </div>
+    } @else if (isLoading() && data().length === 0) {
+    <div class="fc-status fc-status--loading" role="status">
+        Loading clubs...
+    </div>
+    }
+
+    
+    <!-- Toolbar: global search + clear-all. Lives OUTSIDE the table wrapper
+       so neither the dimming overlay nor sticky-header behavior touches it. -->
+    <div class="fc-toolbar">
+        <div class="fc-search">
+            <label for="fc-global-search" class="fc-search__label">
+                Search:
+            </label>
+            <input id="fc-global-search" type="search" class="fc-search__input"
+                placeholder="Search clubs, countries, leagues, stadiums..." [value]="globalFilterDraft()"
+                (input)="setGlobalFilterDraft($any($event.target).value)"
+                [disabled]="isLoading() && data().length === 0" />
+        </div>
+
+        <button type="button" class="fc-clear-btn" (click)="clearAllFilters()"
+            [disabled]="!hasAnyFilter() || (isLoading() && data().length === 0)">
+            Clear filters
+        </button>
+    </div>
+
+    <!-- Table area. The bounded scroll region (.fc-table-scroll) has a fixed
+       max-height so changing rows-per-page does NOT resize the page; the
+       body scrolls inside instead. The sticky <thead> keeps column labels
+       and per-column filter inputs in view as you scroll. -->
+    <div class="fc-table-wrapper" [class.fc-table-wrapper--refreshing]="isLoading() && data().length > 0">
+        <p class="fc-sr-only" role="status" aria-live="polite">
+            @if (isLoading()) {
+            Loading clubs.
+            } @else if (errorMessage()) {
+            Error loading clubs.
+            } @else {
+            Showing {{ rangeStart() }} to {{ rangeEnd() }} of {{ totalCount() }} clubs.
+            }
+        </p>
+
+        <div class="fc-table-scroll">
+            <table class="fc-table" [attr.aria-busy]="isLoading() ? 'true' : 'false'">
+                <thead>
+                    @for (headerGroup of table().getHeaderGroups(); track headerGroup.id) {
+                    <!-- Header row: column labels + sort affordance -->
+                    <tr>
+                        @for (header of headerGroup.headers; track header.id) {
+                        <th [attr.data-column-id]="header.column.id" [attr.aria-sort]="ariaSortFor(header.column.id)">
+                            @if (!header.isPlaceholder) {
+                            @if (header.column.getCanSort()) {
+                            <button type="button" class="fc-th-button" [class.fc-th-button--sorted]="
+                          ariaSortFor(header.column.id) !== 'none'
+                        " (click)="
+                          header.column.getToggleSortingHandler()?.($event)
+                        ">
+                                <span class="fc-th-label">
+                                    {{ headerLabel(header) }}
+                                </span>
+                                <span class="fc-th-sort" aria-hidden="true">
+                                    @if (sortIndicator(header.column.id)) {
+                                    {{ sortIndicator(header.column.id) }}
+                                    } @else {
+                                    <span class="fc-th-sort__hint">⇅</span>
+                                    }
+                                </span>
+                            </button>
+                            } @else {
+                            <span class="fc-th-label">{{ headerLabel(header) }}</span>
+                            }
+                            }
+                        </th>
+                        }
+                    </tr>
+
+                    <!-- Filter row: text "contains" or numeric [min, max] per column -->
+                    <tr class="fc-filter-row">
+                        @for (header of headerGroup.headers; track header.id) {
+                        <th class="fc-filter-cell" [attr.data-column-id]="header.column.id">
+                            @if (isTextFilter(header.column.id)) {
+                            <input type="text" class="fc-filter-input"
+                                [attr.aria-label]="'Filter ' + headerLabel(header)"
+                                [placeholder]="'Filter ' + headerLabel(header)" [value]="getTextDraft(header.column.id)"
+                                (input)="
+                        setTextDraft(
+                          header.column.id,
+                          $any($event.target).value
+                        )
+                      " />
+                            } @else if (isNumberFilter(header.column.id)) {
+                            <div class="fc-filter-range">
+                                <input type="number" class="fc-filter-input fc-filter-input--num"
+                                    [attr.aria-label]="'Min ' + headerLabel(header)" placeholder="min"
+                                    [value]="getNumberDraft(header.column.id, 'min')" (input)="
+                          setNumberDraft(
+                            header.column.id,
+                            'min',
+                            $any($event.target).value
+                          )
+                        " />
+                                <span aria-hidden="true">–</span>
+                                <input type="number" class="fc-filter-input fc-filter-input--num"
+                                    [attr.aria-label]="'Max ' + headerLabel(header)" placeholder="max"
+                                    [value]="getNumberDraft(header.column.id, 'max')" (input)="
+                          setNumberDraft(
+                            header.column.id,
+                            'max',
+                            $any($event.target).value
+                          )
+                        " />
+                            </div>
+                            }
+                        </th>
+                        }
+                    </tr>
+                    }
+                </thead>
+
+                <tbody>
+                    @for (row of table().getRowModel().rows; track row.id) {
+                    <tr>
+                        @for (cell of row.getVisibleCells(); track cell.id) {
+                        <td>{{ cellValue(cell) }}</td>
+                        }
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td [attr.colspan]="table().getAllColumns().length" class="fc-empty">
+                            @if (isLoading()) {
+                            <span>Loading...</span>
+                            } @else if (isEmptyDueToFilters()) {
+                            <span>
+                                No clubs match your current filters.
+                                <button type="button" class="fc-empty-clear" (click)="clearAllFilters()">
+                                    Clear filters
+                                </button>
+                            </span>
+                            } @else {
+                            <span>No clubs found.</span>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Refresh overlay: visible only on refetches, NOT on first load.
+           Sits inside the scroll container so it covers only the body area. -->
+            @if (isLoading() && data().length > 0) {
+            <div class="fc-refresh-overlay" aria-hidden="true">
+                <div class="fc-spinner"></div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Pagination footer: row range, navigation, page size selector.
+       Lives OUTSIDE the table wrapper so it stays anchored during refresh. -->
+    <nav class="fc-pagination" aria-label="Table pagination">
+        <div class="fc-pagination__summary" aria-live="polite">
+            @if (totalCount() === 0) {
+            <span>No clubs found.</span>
+            } @else {
+            Showing
+            <strong>{{ rangeStart() }}–{{ rangeEnd() }}</strong>
+            of <strong>{{ totalCount() }}</strong> clubs.
+            }
+        </div>
+
+        <div class="fc-pagination__controls">
+            <button type="button" class="fc-page-btn" (click)="goToFirstPage()" [disabled]="!canPrev() || isLoading()"
+                aria-label="First page">«</button>
+
+            <button type="button" class="fc-page-btn" (click)="goToPreviousPage()"
+                [disabled]="!canPrev() || isLoading()" aria-label="Previous page">‹</button>
+
+            <span class="fc-page-indicator">
+                Page
+                <input type="number" class="fc-page-input" min="1" [max]="displayPageCount()"
+                    [value]="displayPageNumber()" [disabled]="isLoading()"
+                    (change)="onJumpToPage($any($event.target).value)" aria-label="Current page number" />
+                of {{ displayPageCount() }}
+            </span>
+
+            <button type="button" class="fc-page-btn" (click)="goToNextPage()" [disabled]="!canNext() || isLoading()"
+                aria-label="Next page">›</button>
+
+            <button type="button" class="fc-page-btn" (click)="goToLastPage()" [disabled]="!canNext() || isLoading()"
+                aria-label="Last page">»</button>
+        </div>
+
+        <div class="fc-pagination__page-size">
+            <label for="fc-page-size-select">Rows per page:</label>
+            <select id="fc-page-size-select" class="fc-page-size-select" [value]="pageSize()" [disabled]="isLoading()"
+                (change)="setPageSize($any($event.target).value)">
+                @for (option of pageSizeOptions; track option) {
+                <option [value]="option">{{ option }}</option>
+                }
+            </select>
+        </div>
+    </nav>
+</div>

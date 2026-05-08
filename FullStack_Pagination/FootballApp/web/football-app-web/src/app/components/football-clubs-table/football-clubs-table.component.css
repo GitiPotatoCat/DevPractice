@@ -1,0 +1,748 @@
+/* =====================================================================
+ * Football Clubs Table — design system
+ *
+ * Color tokens are inlined intentionally (no CSS variables) to keep this
+ * component self-contained. If you later move to a theme system, lift
+ * these out as :host { --fc-color-... }.
+ * ================================================================== */
+
+:host {
+    display: block;
+    /* Subtle font smoothing for long lists of mixed text/numbers */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.fc-table-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* =====================================================================
+ * Toolbar — primary search + secondary clear action
+ * ================================================================== */
+
+.fc-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+}
+
+.fc-search {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.fc-search__label {
+    position: absolute;
+    left: -9999px;
+    /* visually hidden; the input has its own visual cue */
+}
+
+.fc-search__input {
+    flex: 1;
+    min-width: 0;
+    height: 2.5rem;
+    padding: 0 0.95rem 0 2.4rem;
+    /* room for the search icon */
+    font-size: 0.92rem;
+    color: #0f172a;
+    border: 1px solid #d6dde6;
+    border-radius: 0.5rem;
+    background: #ffffff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>") no-repeat 0.85rem center;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fc-search__input::placeholder {
+    color: #94a3b8;
+}
+
+.fc-search__input:hover {
+    border-color: #b9c3d0;
+}
+
+.fc-search__input:focus-visible {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.fc-clear-btn {
+    height: 2.5rem;
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+    background: #ffffff;
+    border: 1px solid #d6dde6;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.12s ease, border-color 0.12s ease,
+        color 0.12s ease;
+}
+
+.fc-clear-btn:hover:not(:disabled) {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
+}
+
+.fc-clear-btn:focus-visible {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.fc-clear-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =====================================================================
+ * Status banners
+ * ================================================================== */
+
+.fc-status {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.fc-status--loading {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.fc-status--error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.fc-status__icon {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.fc-status__msg {
+    flex: 1;
+    min-width: 0;
+}
+
+.fc-status__retry {
+    height: 1.85rem;
+    padding: 0 0.85rem;
+    border: 1px solid currentColor;
+    border-radius: 0.375rem;
+    background: transparent;
+    color: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.fc-status__retry:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.fc-status__retry:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.fc-status__retry:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* =====================================================================
+ * Table card — the bordered, elevated container
+ * ================================================================== */
+
+.fc-table-wrapper {
+    position: relative;
+    border: 1px solid #e3e8ef;
+    border-radius: 0.625rem;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04),
+        0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.fc-table-scroll {
+    position: relative;
+    max-height: 60vh;
+    min-height: 18rem;
+    overflow: auto;
+    scroll-padding-top: 6rem;
+}
+
+/* Custom scrollbar — subtle, matches the surface */
+.fc-table-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.fc-table-scroll::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+
+.fc-table-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 5px;
+    border: 2px solid #f8fafc;
+}
+
+.fc-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* =====================================================================
+ * Table — fixed layout, planned column widths
+ * ================================================================== */
+
+.fc-table {
+    width: 100%;
+    min-width: 920px;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+/* Column widths — sum to 100% */
+.fc-table th[data-column-id='id'],
+.fc-table td:nth-child(1) {
+    width: 6%;
+}
+
+.fc-table th[data-column-id='clubName'],
+.fc-table td:nth-child(2) {
+    width: 18%;
+}
+
+.fc-table th[data-column-id='country'],
+.fc-table td:nth-child(3) {
+    width: 12%;
+}
+
+.fc-table th[data-column-id='league'],
+.fc-table td:nth-child(4) {
+    width: 14%;
+}
+
+.fc-table th[data-column-id='foundedYear'],
+.fc-table td:nth-child(5) {
+    width: 14%;
+}
+
+.fc-table th[data-column-id='stadium'],
+.fc-table td:nth-child(6) {
+    width: 22%;
+}
+
+.fc-table th[data-column-id='titlesWon'],
+.fc-table td:nth-child(7) {
+    width: 14%;
+}
+
+/* =====================================================================
+ * Header — TWO sticky rows with distinct backgrounds for hierarchy
+ * ================================================================== */
+
+/* Row 1: column labels (slightly tinted, taller) */
+.fc-table thead tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    height: 3rem;
+    padding: 0 0.95rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e3e8ef;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+    color: #475569;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* Row 2: filter inputs (white, sits below the label row) */
+.fc-table thead tr:nth-child(2) th {
+    position: sticky;
+    /* matches row 1 height */
+    top: 3rem;
+    z-index: 3;
+    height: 3rem;
+    padding: 0.5rem 0.7rem;
+    background: #ffffff;
+    border-bottom: 1px solid #e3e8ef;
+    vertical-align: middle;
+}
+
+/* Subtle bottom shadow when the body has scrolled — adds depth */
+.fc-table thead tr:nth-child(2) th::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -8px;
+    height: 8px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.fc-table-scroll:not(:hover) .fc-table thead tr:nth-child(2) th::after,
+.fc-table-scroll[data-scrolled='true'] .fc-table thead tr:nth-child(2) th::after {
+    opacity: 1;
+}
+
+/* Header sort button */
+.fc-th-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    user-select: none;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    transition: color 0.12s ease;
+}
+
+.fc-th-button:hover:not(:disabled) {
+    color: #0f172a;
+}
+
+.fc-th-button:hover:not(:disabled) .fc-th-sort__hint {
+    opacity: 1;
+    color: #475569;
+}
+
+.fc-th-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 3px;
+    border-radius: 0.25rem;
+}
+
+.fc-th-button--sorted {
+    color: #1d4ed8;
+}
+
+.fc-th-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.fc-th-label {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fc-th-sort {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 1.5rem;
+    height: 1.25rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+
+.fc-th-sort__hint {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: #cbd5e1;
+    opacity: 0.75;
+    transition: opacity 0.12s ease, color 0.12s ease;
+}
+
+/* =====================================================================
+ * Filter inputs (per-column)
+ * ================================================================== */
+
+.fc-filter-input {
+    width: 100%;
+    height: 2.1rem;
+    padding: 0 0.65rem;
+    font-size: 0.85rem;
+    color: #1e293b;
+    background: #f8fafc;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    transition: background-color 0.12s ease, border-color 0.12s ease,
+        box-shadow 0.12s ease;
+}
+
+.fc-filter-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.fc-filter-input:hover {
+    background: #f1f5f9;
+}
+
+.fc-filter-input:focus-visible {
+    outline: none;
+    background: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.fc-filter-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.fc-filter-range {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.fc-filter-range>span {
+    color: #94a3b8;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.fc-filter-input--num {
+    flex: 1;
+    min-width: 0;
+    text-align: right;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.fc-filter-input--num::-webkit-outer-spin-button,
+.fc-filter-input--num::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Numeric columns: right-align headers + cells */
+.fc-table th[data-column-id='id'] .fc-th-button,
+.fc-table th[data-column-id='foundedYear'] .fc-th-button,
+.fc-table th[data-column-id='titlesWon'] .fc-th-button {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    text-align: right;
+}
+
+.fc-table th[data-column-id='id'] .fc-th-label,
+.fc-table th[data-column-id='foundedYear'] .fc-th-label,
+.fc-table th[data-column-id='titlesWon'] .fc-th-label {
+    flex: 1;
+    text-align: right;
+}
+
+.fc-table td:nth-child(1),
+.fc-table td:nth-child(5),
+.fc-table td:nth-child(7) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+ * Body rows
+ * ================================================================== */
+
+.fc-table tbody td {
+    padding: 0.85rem 0.95rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+/* First column gets a subtle accent — communicates "row identifier" */
+.fc-table tbody td:first-child {
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Second column (Club name) is the primary identifier — emphasize it */
+.fc-table tbody td:nth-child(2) {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.fc-table tbody tr {
+    transition: background-color 0.1s ease;
+}
+
+.fc-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* Remove the bottom border from the last row to avoid a double-line look */
+.fc-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Empty state */
+.fc-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #64748b;
+    font-style: normal;
+    /* italic was distracting */
+}
+
+.fc-empty-clear {
+    margin-left: 0.5rem;
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.375rem;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #2563eb;
+    cursor: pointer;
+    transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.fc-empty-clear:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+}
+
+.fc-empty-clear:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* =====================================================================
+ * Refresh overlay (during refetch)
+ * ================================================================== */
+
+.fc-table-wrapper--refreshing tbody {
+    opacity: 0.45;
+    transition: opacity 0.15s ease;
+}
+
+.fc-refresh-overlay {
+    position: absolute;
+    top: 6rem;
+    /* below both sticky header rows */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 2rem;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.fc-spinner {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 3px solid #e2e8f0;
+    border-top-color: #2563eb;
+    animation: fc-spin 0.7s linear infinite;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    background: #ffffff;
+}
+
+@keyframes fc-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fc-spinner {
+        animation: none;
+    }
+
+    .fc-table-wrapper--refreshing tbody {
+        transition: none;
+    }
+}
+
+/* =====================================================================
+ * Pagination — the footer below the card
+ * ================================================================== */
+
+.fc-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 0.25rem;
+}
+
+.fc-pagination__summary {
+    font-size: 0.875rem;
+    color: #475569;
+}
+
+.fc-pagination__summary strong {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.fc-pagination__controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.fc-page-btn {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    border: 1px solid #d6dde6;
+    border-radius: 0.4rem;
+    background: #ffffff;
+    color: #475569;
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.12s ease, border-color 0.12s ease,
+        color 0.12s ease;
+}
+
+.fc-page-btn:hover:not(:disabled) {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
+}
+
+.fc-page-btn:focus-visible {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.fc-page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.fc-page-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0.5rem;
+    font-size: 0.875rem;
+    color: #475569;
+}
+
+.fc-page-input {
+    width: 3.5rem;
+    height: 2.25rem;
+    padding: 0 0.4rem;
+    border: 1px solid #d6dde6;
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    color: #0f172a;
+    background: #ffffff;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.fc-page-input:hover:not(:disabled) {
+    border-color: #94a3b8;
+}
+
+.fc-page-input:focus-visible {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.fc-page-input::-webkit-outer-spin-button,
+.fc-page-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.fc-page-input {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.fc-pagination__page-size {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    color: #475569;
+}
+
+.fc-page-size-select {
+    height: 2.25rem;
+    padding: 0 1.85rem 0 0.75rem;
+    border: 1px solid #d6dde6;
+    border-radius: 0.4rem;
+    background: #ffffff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 0.6rem center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #0f172a;
+    cursor: pointer;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.fc-page-size-select:hover:not(:disabled) {
+    border-color: #94a3b8;
+}
+
+.fc-page-size-select:focus-visible {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* =====================================================================
+ * Screen-reader-only utility
+ * ================================================================== */
+
+.fc-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

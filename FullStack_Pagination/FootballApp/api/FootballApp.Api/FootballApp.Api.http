@@ -1,0 +1,84 @@
+@FootballApp_baseUrl = https://localhost:7098
+
+### Page 1, 5 rows, default sort (by Id)
+POST {{FootballApp_baseUrl}}/api/footballclubs/query
+Content-Type: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 5
+}
+
+### Sort by titlesWon DESC, then clubName ASC, top 5
+POST {{FootballApp_baseUrl}}/api/footballclubs/query
+Content-Type: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 5,
+  "sort": [
+    { "id": "titlesWon", "desc": true },
+    { "id": "clubName",  "desc": false }
+  ]
+}
+
+### Filter by country, sorted, paged
+POST {{FootballApp_baseUrl}}/api/footballclubs/query
+Content-Type: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 10,
+  "filters": [
+    { "id": "country", "value": "Spain" }
+  ],
+  "sort": [
+    { "id": "titlesWon", "desc": true }
+  ]
+}
+
+### Range filter: founded between 1900 and 1925
+POST {{FootballApp_baseUrl}}/api/footballclubs/query
+Content-Type: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 10,
+  "filters": [
+    { "id": "foundedYear", "value": [1900, 1925] }
+  ]
+}
+
+### Global search
+POST {{FootballApp_baseUrl}}/api/footballclubs/query
+Content-Type: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 5,
+  "globalFilter": "Madrid"
+}
+
+
+### T1 - Default page, 5 rows
+POST {{FootballApp_baseUrl}}/api/footballclubs/query
+Content-Type: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 5
+}
+
+
+### T3 - Sort by titlesWon DESC, then clubName ASC
+POST {{FootballApp_baseUrl}}/api/footballclubs/query
+Content-Type: application/json
+
+{
+  "pageIndex": 0,
+  "pageSize": 10,
+  "sort": [
+    { "id": "titlesWon", "desc": true },
+    { "id": "clubName",  "desc": false }
+  ]
+}
