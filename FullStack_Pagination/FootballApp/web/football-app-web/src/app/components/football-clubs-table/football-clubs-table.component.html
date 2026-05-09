@@ -84,47 +84,6 @@
                         </th>
                         }
                     </tr>
-
-                    <!-- Filter row: text "contains" or numeric [min, max] per column -->
-                    <tr class="fc-filter-row">
-                        @for (header of headerGroup.headers; track header.id) {
-                        <th class="fc-filter-cell" [attr.data-column-id]="header.column.id">
-                            @if (isTextFilter(header.column.id)) {
-                            <input type="text" class="fc-filter-input"
-                                [attr.aria-label]="'Filter ' + headerLabel(header)"
-                                [placeholder]="'Filter ' + headerLabel(header)" [value]="getTextDraft(header.column.id)"
-                                (input)="
-                        setTextDraft(
-                          header.column.id,
-                          $any($event.target).value
-                        )
-                      " />
-                            } @else if (isNumberFilter(header.column.id)) {
-                            <div class="fc-filter-range">
-                                <input type="number" class="fc-filter-input fc-filter-input--num"
-                                    [attr.aria-label]="'Min ' + headerLabel(header)" placeholder="min"
-                                    [value]="getNumberDraft(header.column.id, 'min')" (input)="
-                          setNumberDraft(
-                            header.column.id,
-                            'min',
-                            $any($event.target).value
-                          )
-                        " />
-                                <span aria-hidden="true">–</span>
-                                <input type="number" class="fc-filter-input fc-filter-input--num"
-                                    [attr.aria-label]="'Max ' + headerLabel(header)" placeholder="max"
-                                    [value]="getNumberDraft(header.column.id, 'max')" (input)="
-                          setNumberDraft(
-                            header.column.id,
-                            'max',
-                            $any($event.target).value
-                          )
-                        " />
-                            </div>
-                            }
-                        </th>
-                        }
-                    </tr>
                     }
                 </thead>
 

@@ -12,7 +12,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import {
     ColumnDef,
-    ColumnFiltersState,
     PaginationState,
     SortingState,
     Table,
@@ -59,7 +58,7 @@ export class FootballClubsTableComponent {
      */
     protected readonly pagination = signal<PaginationState>({
         pageIndex: 0,
-        pageSize: 20,
+        pageSize: 10,
     });
 
     /**
@@ -72,14 +71,7 @@ export class FootballClubsTableComponent {
    */
     protected readonly sorting = signal<SortingState>([]);
 
-    /**
-   * Per-column filters. Same shape as the backend's ColumnFilterDescriptor[].
-   * The `value` is `unknown` because columns of different types put
-   * different shapes into it:
-   *   - text columns:    string ("Spain")
-   *   - numeric columns: [min|null, max|null] tuple ([1900, 1925])
-   */
-    protected readonly columnFilters = signal<ColumnFiltersState>([]);
+    
 
     /**
      * Free-text search. The backend ORs it across clubName, country,
@@ -91,13 +83,6 @@ export class FootballClubsTableComponent {
     protected readonly globalFilterDraft = signal<string>('');
 
 
-    /**
-     * Per-column filter draft values shown in the UI BEFORE debounce.
-     * Keyed by column id. The committed values flow into columnFilters
-     * after the debounce window. Separating "what the user is typing"
-     * from "what we send to the server" is what makes debouncing clean.
-     */
-    protected readonly columnFilterDrafts = signal<Record<string, unknown>>({});
 
     // ---- Column definitions (constant for now) ---------------------------
     private readonly columns: ColumnDef<FootballClubDto>[] = footballClubColumns;
@@ -123,7 +108,6 @@ export class FootballClubsTableComponent {
             state: {
                 pagination: this.pagination(),
                 sorting: this.sorting(),
-                columnFilters: this.columnFilters(),
                 globalFilter: this.globalFilter(),
                 columnPinning: { left: [], right: [] },
             },
@@ -149,12 +133,7 @@ export class FootballClubsTableComponent {
                 this.pagination.update((p) => ({ ...p, pageIndex: 0 }));
             },
 
-            onColumnFiltersChange: (updater: Updater<ColumnFiltersState>) => {
-                const next =
-                    typeof updater === 'function' ? updater(this.columnFilters()) : updater;
-                this.columnFilters.set(next);
-                this.pagination.update((p) => ({ ...p, pageIndex: 0 }));
-            },
+            
 
             onGlobalFilterChange: (updater: Updater<string>) => {
                 const next =
@@ -184,7 +163,6 @@ export class FootballClubsTableComponent {
     private readonly currentRequest = computed<PagedQueryRequest>(() => {
         const { pageIndex, pageSize } = this.pagination();
         const sort = this.sorting();
-        const filters = this.columnFilters();
         const global = this.globalFilter().trim();
 
         return {
@@ -194,9 +172,6 @@ export class FootballClubsTableComponent {
             // omitting it lets the backend apply its default Id-ascending order.
             ...(sort.length > 0
                 ? { sort: sort.map((s) => ({ id: s.id, desc: s.desc })) }
-                : {}),
-            ...(filters.length > 0
-                ? { filters: filters.map((f) => ({ id: f.id, value: f.value })) }
                 : {}),
             ...(global.length > 0
                 ? { globalFilter: global }
@@ -213,20 +188,6 @@ export class FootballClubsTableComponent {
             this.fetchPage(request);
         });
 
-        // NEW: debounce the column-filter drafts before committing them as
-        // real columnFilters state. Without this, every keystroke fires HTTP.
-        toObservable(this.columnFilterDrafts)
-            .pipe(
-                debounceTime(300),
-                distinctUntilChanged(
-                    (a, b) => JSON.stringify(a) === JSON.stringify(b),
-                ),
-                takeUntilDestroyed(this.destroyRef),
-            )
-            .subscribe((drafts) => {
-                this.commitDrafts(drafts);
-            });
-
 
         toObservable(this.globalFilterDraft)
             .pipe(
@@ -241,42 +202,7 @@ export class FootballClubsTableComponent {
                 this.pagination.update((p) => ({ ...p, pageIndex: 0 }));
             });
     }
-
-    /**
-   * Convert the drafts record into a clean ColumnFiltersState that
-   * matches what the backend expects. Drops empty strings, drops
-   * empty tuples, drops anything we don't recognize.
-   */
-    private commitDrafts(drafts: Record<string, unknown>): void {
-        const next: ColumnFiltersState = [];
-
-        for (const [id, value] of Object.entries(drafts)) {
-            // Text column: empty string = no filter.
-            if (typeof value === 'string') {
-                if (value.trim().length > 0) {
-                    next.push({ id, value: value.trim() });
-                }
-                continue;
-            }
-            // Numeric range column: tuple [min, max], either bound nullable.
-            if (Array.isArray(value) && value.length === 2) {
-                const [min, max] = value;
-                if (min !== null || max !== null) {
-                    next.push({ id, value: [min, max] });
-                }
-                continue;
-            }
-            // Any other shape: ignored.
-        }
-
-        // Skip the update if nothing actually changed - keeps the effect
-        // from re-firing for keystrokes that resolve to the same committed state.
-        const before = this.columnFilters();
-        if (JSON.stringify(before) === JSON.stringify(next)) return;
-
-        this.columnFilters.set(next);
-        this.pagination.update((p) => ({ ...p, pageIndex: 0 }));
-    }
+    
 
     // ---- HTTP -------------------------------------------------------------
     private fetchPage(request: PagedQueryRequest): void {
@@ -443,87 +369,18 @@ export class FootballClubsTableComponent {
 
     // ---- Filter helpers --------------------------------------------------
 
-    /** Column ids that take free-text "contains" input. Mirror of ApplyColumnFilters. */
-    private readonly textFilterColumns = new Set([
-        'clubName', 'country', 'league', 'stadium',
-    ]);
 
-    /** Column ids that take [min, max] numeric range. Mirror of ApplyColumnFilters. */
-    private readonly numberFilterColumns = new Set([
-        'id', 'foundedYear', 'titlesWon',
-    ]);
-
-    protected isTextFilter(columnId: string): boolean {
-        return this.textFilterColumns.has(columnId);
-    }
-
-    protected isNumberFilter(columnId: string): boolean {
-        return this.numberFilterColumns.has(columnId);
-    }
-
-    /** Read the current draft string for a text column. */
-    protected getTextDraft(columnId: string): string {
-        const v = this.columnFilterDrafts()[columnId];
-        return typeof v === 'string' ? v : '';
-    }
-
-    /** Read the current draft tuple for a numeric range column. */
-    protected getNumberDraft(columnId: string, bound: 'min' | 'max'): string {
-        const v = this.columnFilterDrafts()[columnId];
-        if (!Array.isArray(v) || v.length !== 2) return '';
-        const part = bound === 'min' ? v[0] : v[1];
-        return part === null || part === undefined ? '' : String(part);
-    }
-
-    /**
-     * User typed in a text-column input. Update the draft signal only;
-     * the debounce effect (next sub-step) will commit to columnFilters.
-     */
-    setTextDraft(columnId: string, raw: string): void {
-        this.columnFilterDrafts.update((drafts) => ({
-            ...drafts,
-            [columnId]: raw,
-        }));
-    }
-
-    /**
-     * User typed in one half of a numeric-range input. We keep the OTHER
-     * half intact and update only the side they edited.
-     */
-    setNumberDraft(columnId: string, bound: 'min' | 'max', raw: string): void {
-        this.columnFilterDrafts.update((drafts) => {
-            const existing = drafts[columnId];
-            const tuple: [number | null, number | null] =
-                Array.isArray(existing) && existing.length === 2
-                    ? [
-                        existing[0] as number | null,
-                        existing[1] as number | null,
-                    ]
-                    : [null, null];
-
-            const parsed =
-                raw.trim() === '' ? null : Number.isFinite(Number(raw)) ? Number(raw) : null;
-
-            if (bound === 'min') tuple[0] = parsed;
-            else tuple[1] = parsed;
-
-            return { ...drafts, [columnId]: tuple };
-        });
-    }
 
     /** Clears all column filters AND the global search. */
     clearAllFilters(): void {
-        this.columnFilterDrafts.set({});
         this.globalFilterDraft.set('');
-        
-        this.columnFilters.set([]);
         this.globalFilter.set('');
         this.pagination.update((p) => ({ ...p, pageIndex: 0 }));
     }
 
     /** True if anything is filtered (used to enable the "Clear" button). */
     protected readonly hasAnyFilter = computed(() =>
-        this.columnFilters().length > 0 || this.globalFilter().trim().length > 0,
+        this.globalFilter().trim().length > 0,
     );
 
     /**
