@@ -1,0 +1,63 @@
+@FoodShop_HostAddress = https://localhost:7128
+
+### Get all products
+GET {{FoodShop_HostAddress}}/api/products
+
+### Get one product
+GET {{FoodShop_HostAddress}}/api/products/1
+
+### Get a product that doesn't exist (should return 404)
+GET {{FoodShop_HostAddress}}/api/products/999
+
+### Get all categories
+GET {{FoodShop_HostAddress}}/api/categories
+
+### Get all products in a category
+GET {{FoodShop_HostAddress}}/api/categories/1/products
+
+### Create a new product
+POST {{FoodShop_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Bagel",
+  "description": "Sesame seed bagel",
+  "price": 1.50,
+  "stock": 20,
+  "categoryId": 2
+}
+
+### Update product 5
+PUT {{FoodShop_HostAddress}}/api/products/5
+Content-Type: application/json
+
+{
+  "name": "Green Apple",
+  "description": "Tart and crisp",
+  "price": 0.60,
+  "stock": 80,
+  "categoryId": 1
+}
+
+### Delete product 5
+DELETE {{FoodShop_HostAddress}}/api/products/5
+
+### Create a new category
+POST {{FoodShop_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Snacks"
+}
+
+### Try a bad request — categoryId that doesn't exist
+POST {{FoodShop_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Mystery Item",
+  "description": "Belongs to no category",
+  "price": 5.00,
+  "stock": 1,
+  "categoryId": 999
+}
