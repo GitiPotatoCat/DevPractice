@@ -1,0 +1,69 @@
+<!-- admin-categories.component.html -->
+<div class="card">
+    <div class="header-row">
+        <h1>Categories</h1>
+        <button class="primary" (click)="openCreate()">+ New Category</button>
+    </div>
+
+    @if (successMessage()) { <p class="success">{{ successMessage() }}</p> }
+    @if (errorMessage() && !isEditing()) { <p class="error">{{ errorMessage() }}</p> }
+
+    @if (isLoading()) {
+    <p class="muted">Loading...</p>
+    } @else if (categories().length === 0) {
+    <p class="muted">No categories yet.</p>
+    } @else {
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="actions-col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (cat of categories(); track cat.id) {
+            <tr>
+                <td>{{ cat.id }}</td>
+                <td>{{ cat.name }}</td>
+                <td>{{ cat.description || '—' }}</td>
+                <td class="actions-col">
+                    <button (click)="openEdit(cat)">Edit</button>
+                    <button class="danger" (click)="remove(cat)">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+</div>
+
+@if (isEditing()) {
+<div class="dialog-backdrop" (click)="closeDialog()">
+    <div class="dialog-card" (click)="$event.stopPropagation()">
+        <h2>{{ isCreating() ? 'New Category' : 'Edit Category' }}</h2>
+
+        <form [formGroup]="form" (ngSubmit)="save()">
+            <label>
+                Name
+                <input type="text" formControlName="name" />
+            </label>
+
+            <label>
+                Description
+                <textarea formControlName="description" rows="3"></textarea>
+            </label>
+
+            @if (errorMessage()) { <p class="error">{{ errorMessage() }}</p> }
+
+            <div class="actions">
+                <button type="button" (click)="closeDialog()" [disabled]="isSubmitting()">Cancel</button>
+                <button type="submit" class="primary" [disabled]="form.invalid || isSubmitting()">
+                    {{ isSubmitting() ? 'Saving...' : 'Save' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

@@ -1,0 +1,77 @@
+<!-- admin-brands.component.html -->
+<div class="card">
+    <div class="header-row">
+        <h1>Brands</h1>
+        <button class="primary" (click)="openCreate()">+ New Brand</button>
+    </div>
+
+    @if (successMessage()) {
+    <p class="success">{{ successMessage() }}</p>
+    }
+    @if (errorMessage() && !isEditing()) {
+    <p class="error">{{ errorMessage() }}</p>
+    }
+
+    @if (isLoading()) {
+    <p class="muted">Loading...</p>
+    } @else if (brands().length === 0) {
+    <p class="muted">No brands yet. Click "+ New Brand" to add one.</p>
+    } @else {
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Country</th>
+                <th class="actions-col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (brand of brands(); track brand.id) {
+            <tr>
+                <td>{{ brand.id }}</td>
+                <td>{{ brand.name }}</td>
+                <td>{{ brand.country }}</td>
+                <td class="actions-col">
+                    <button (click)="openEdit(brand)">Edit</button>
+                    <button class="danger" (click)="remove(brand)">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+</div>
+
+@if (isEditing()) {
+<!-- Dialog backdrop -->
+<div class="dialog-backdrop" (click)="closeDialog()">
+    <!-- Dialog itself (stop click propagation) -->
+    <div class="dialog-card" (click)="$event.stopPropagation()">
+        <h2>{{ isCreating() ? 'New Brand' : 'Edit Brand' }}</h2>
+
+        <form [formGroup]="form" (ngSubmit)="save()">
+            <label>
+                Name
+                <input type="text" formControlName="name" />
+            </label>
+
+            <label>
+                Country
+                <input type="text" formControlName="country" />
+            </label>
+
+            @if (errorMessage()) {
+            <p class="error">{{ errorMessage() }}</p>
+            }
+
+            <div class="actions">
+                <button type="button" (click)="closeDialog()" [disabled]="isSubmitting()">Cancel</button>
+                <button type="submit" class="primary" [disabled]="form.invalid || isSubmitting()">
+                    {{ isSubmitting() ? 'Saving...' : 'Save' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

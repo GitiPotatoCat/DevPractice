@@ -1,0 +1,10 @@
+// paged-result.model.ts
+export interface PagedResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}

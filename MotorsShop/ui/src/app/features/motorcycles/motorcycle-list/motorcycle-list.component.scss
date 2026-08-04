@@ -1,0 +1,56 @@
+// motorcycle-list.component.scss
+.filters {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.filters input {
+    flex: 1 1 240px;
+}
+
+.filters select {
+    flex: 0 0 160px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.bike-card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s;
+}
+
+.bike-card:hover {
+    border-color: var(--color-primary);
+    text-decoration: none;
+}
+
+.bike-card h3 {
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.bike-card .price {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: var(--spacing-sm) 0;
+}
+
+.bike-card .out-of-stock {
+    color: var(--color-danger);
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+}

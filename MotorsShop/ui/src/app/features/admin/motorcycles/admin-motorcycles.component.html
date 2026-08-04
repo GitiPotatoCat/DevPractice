@@ -1,0 +1,119 @@
+<!-- admin-motorcycles.component.html -->
+<div class="card">
+    <div class="header-row">
+        <h1>Motorcycles</h1>
+        <button class="primary" (click)="openCreate()">+ New Motorcycle</button>
+    </div>
+
+    @if (successMessage()) { <p class="success">{{ successMessage() }}</p> }
+    @if (errorMessage() && !isEditing()) { <p class="error">{{ errorMessage() }}</p> }
+
+    @if (isLoading()) {
+    <p class="muted">Loading...</p>
+    } @else if (motorcycles().length === 0) {
+    <p class="muted">No motorcycles yet.</p>
+    } @else {
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th class="right">Price</th>
+                <th class="right">Stock</th>
+                <th class="actions-col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (bike of motorcycles(); track bike.id) {
+            <tr>
+                <td>{{ bike.id }}</td>
+                <td>{{ bike.name }}</td>
+                <td>{{ bike.brandName }}</td>
+                <td>{{ bike.categoryName }}</td>
+                <td class="right">{{ bike.price | currency:'USD':'symbol':'1.0-0' }}</td>
+                <td class="right">{{ bike.stock }}</td>
+                <td class="actions-col">
+                    <button (click)="openEdit(bike)">Edit</button>
+                    <button class="danger" (click)="remove(bike)">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+</div>
+
+@if (isEditing()) {
+<div class="dialog-backdrop" (click)="closeDialog()">
+    <div class="dialog-card dialog-card-wide" (click)="$event.stopPropagation()">
+        <h2>{{ isCreating() ? 'New Motorcycle' : 'Edit Motorcycle' }}</h2>
+
+        <form [formGroup]="form" (ngSubmit)="save()">
+            <label>
+                Name
+                <input type="text" formControlName="name" />
+            </label>
+
+            <label>
+                Description
+                <textarea formControlName="description" rows="2"></textarea>
+            </label>
+
+            <div class="grid-2">
+                <label>
+                    Brand
+                    <select formControlName="brandId">
+                        <option [value]="0">Select brand...</option>
+                        @for (b of brands(); track b.id) {
+                        <option [value]="b.id">{{ b.name }}</option>
+                        }
+                    </select>
+                </label>
+
+                <label>
+                    Category
+                    <select formControlName="categoryId">
+                        <option [value]="0">Select category...</option>
+                        @for (c of categories(); track c.id) {
+                        <option [value]="c.id">{{ c.name }}</option>
+                        }
+                    </select>
+                </label>
+            </div>
+
+            <div class="grid-2">
+                <label>
+                    Price
+                    <input type="number" min="0" step="0.01" formControlName="price" />
+                </label>
+                <label>
+                    Year
+                    <input type="number" min="1900" max="2100" formControlName="year" />
+                </label>
+            </div>
+
+            <div class="grid-2">
+                <label>
+                    Stock
+                    <input type="number" min="0" formControlName="stock" />
+                </label>
+                <label>
+                    Engine (cc)
+                    <input type="number" min="50" formControlName="engineCc" />
+                </label>
+            </div>
+
+            @if (errorMessage()) { <p class="error">{{ errorMessage() }}</p> }
+
+            <div class="actions">
+                <button type="button" (click)="closeDialog()" [disabled]="isSubmitting()">Cancel</button>
+                <button type="submit" class="primary" [disabled]="form.invalid || isSubmitting()">
+                    {{ isSubmitting() ? 'Saving...' : 'Save' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

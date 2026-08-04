@@ -1,0 +1,53 @@
+<!-- place-order.component.html -->
+<div class="header-row">
+    <h1>Place an Order</h1>
+    <div class="summary">
+        <div>
+            <span class="muted">Items:</span> {{ selectedCount() }}
+        </div>
+        <div>
+            <span class="muted">Total:</span>
+            <strong>{{ total() | currency:'USD':'symbol':'1.0-0' }}</strong>
+        </div>
+        <button class="primary" [disabled]="selectedCount() === 0 || isSubmitting()" (click)="submit()">
+            {{ isSubmitting() ? 'Placing...' : 'Place order' }}
+        </button>
+    </div>
+</div>
+
+@if (errorMessage()) {
+<div class="card error">{{ errorMessage() }}</div>
+}
+
+@let page = bikes();
+@if (page) {
+<div class="bike-list">
+    @for (bike of page.items; track bike.id) {
+    <div class="card bike-row">
+        <div class="bike-info">
+            <h3>{{ bike.name }}</h3>
+            <p class="muted">
+                {{ bike.brandName }} · {{ bike.categoryName }} · {{ bike.year }}
+            </p>
+            <p class="price">
+                {{ bike.price | currency:'USD':'symbol':'1.0-0' }}
+                <span class="muted">· {{ bike.stock }} in stock</span>
+            </p>
+        </div>
+        <div class="bike-actions">
+            @if (bike.stock === 0) {
+            <span class="muted">Out of stock</span>
+            } @else {
+            <label>
+                Qty
+                <input type="number" min="0" [max]="bike.stock" [ngModel]="quantities()[bike.id] ?? 0"
+                    (ngModelChange)="setQuantity(bike.id, $event, bike.stock)" />
+            </label>
+            }
+        </div>
+    </div>
+    }
+</div>
+} @else {
+<div class="card muted">Loading...</div>
+}

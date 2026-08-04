@@ -1,0 +1,64 @@
+<!-- admin-orders.component.html -->
+<div class="card">
+    <h1>Orders</h1>
+
+    @if (successMessage()) { <p class="success">{{ successMessage() }}</p> }
+    @if (errorMessage()) { <p class="error">{{ errorMessage() }}</p> }
+
+    @if (isLoading()) {
+    <p class="muted">Loading...</p>
+    } @else if (orders().length === 0) {
+    <p class="muted">No orders yet.</p>
+    } @else {
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th class="right">Total</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (order of orders(); track order.id) {
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.orderDate | date:'mediumDate' }}</td>
+                <td>{{ order.customerName }}</td>
+                <td class="right">{{ order.total | currency:'USD':'symbol':'1.0-0' }}</td>
+                <td>
+                    <select [ngModel]="order.status" (ngModelChange)="changeStatus(order, $event)"
+                        [disabled]="updatingId() === order.id">
+                        @for (s of statuses; track s) {
+                        <option [value]="s">{{ s }}</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <button (click)="toggle(order.id)">
+                        {{ expandedId() === order.id ? 'Hide' : 'View' }}
+                    </button>
+                </td>
+            </tr>
+
+            @if (expandedId() === order.id) {
+            <tr class="details">
+                <td colspan="6">
+                    <ul class="items">
+                        @for (item of order.items; track item.motorcycleId) {
+                        <li>
+                            <span>{{ item.motorcycleName }} × {{ item.quantity }}</span>
+                            <span class="muted">{{ item.lineTotal | currency:'USD':'symbol':'1.0-0' }}</span>
+                        </li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+            }
+            }
+        </tbody>
+    </table>
+    }
+</div>

@@ -1,0 +1,104 @@
+// admin-motorcycles.component.scss
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    text-align: left;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.data-table thead th {
+    font-size: 0.85em;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.actions-col {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.actions-col button {
+    margin-left: var(--spacing-xs);
+}
+
+.success {
+    color: var(--color-success);
+    background: #d4edda;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius);
+}
+
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: var(--spacing-md);
+}
+
+.dialog-card {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    padding: var(--spacing-lg);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-card h2 {
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.dialog-card form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.dialog-card label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.dialog-card .actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    margin-top: var(--spacing-sm);
+}
+
+// admin-motorcycles.component.scss — add to the shared dialog styles
+.dialog-card-wide {
+    max-width: 600px;
+}
+
+.right {
+    text-align: right;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.grid-2 label {
+    gap: var(--spacing-xs);
+}

@@ -1,0 +1,31 @@
+// header.component.scss
+.header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+.brand {
+  font-weight: 700;
+  font-size: 1.2em;
+  color: var(--color-text);
+}
+.brand:hover { text-decoration: none; }
+.nav {
+  display: flex;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+.nav a.active {
+  font-weight: 600;
+}
+.auth {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}

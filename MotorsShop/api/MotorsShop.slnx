@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MotorsShop.Tests/MotorsShop.Tests.csproj" Id="02e06f8b-2764-4260-a546-ebea841f8efe" />
+  <Project Path="MotorsShop/MotorsShop.csproj" />
+</Solution>

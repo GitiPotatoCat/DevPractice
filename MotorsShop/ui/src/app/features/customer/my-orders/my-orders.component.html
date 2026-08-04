@@ -1,0 +1,55 @@
+<!-- my-orders.component.html -->
+<div class="card">
+    <h1>My Orders</h1>
+
+    @if (orders().length === 0) {
+    <p class="muted">You haven't placed any orders yet.</p>
+    <a routerLink="/" class="primary-link">Browse motorcycles</a>
+    } @else {
+    <table class="orders">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th class="right">Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (order of orders(); track order.id) {
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.orderDate | date:'mediumDate' }}</td>
+                <td>
+                    <span class="status status-{{ order.status.toLowerCase() }}">
+                        {{ order.status }}
+                    </span>
+                </td>
+                <td class="right">{{ order.total | currency:'USD':'symbol':'1.0-0' }}</td>
+                <td>
+                    <button (click)="toggle(order.id)">
+                        {{ expandedOrderId() === order.id ? 'Hide' : 'View' }}
+                    </button>
+                </td>
+            </tr>
+
+            @if (expandedOrderId() === order.id) {
+            <tr class="details">
+                <td colspan="5">
+                    <ul class="items">
+                        @for (item of order.items; track item.motorcycleId) {
+                        <li>
+                            <span>{{ item.motorcycleName }} × {{ item.quantity }}</span>
+                            <span class="muted">{{ item.lineTotal | currency:'USD':'symbol':'1.0-0' }}</span>
+                        </li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+            }
+            }
+        </tbody>
+    </table>
+    }
+</div>

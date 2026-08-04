@@ -1,0 +1,30 @@
+<!-- motorcycle-detail.component.html -->
+<a routerLink="/" class="back-link">&larr; Back to catalog</a>
+
+@if (bike()) {
+<article class="card">
+    <h1>{{ bike()!.name }}</h1>
+    <p class="muted">{{ bike()!.brandName }} · {{ bike()!.categoryName }} · {{ bike()!.year }}</p>
+
+    @if (bike()!.description) {
+    <p>{{ bike()!.description }}</p>
+    }
+
+    <div class="specs">
+        <div>
+            <div class="muted">Engine</div>
+            <div class="value">{{ bike()!.engineCc }}cc</div>
+        </div>
+        <div>
+            <div class="muted">Price</div>
+            <div class="value">{{ bike()!.price | currency:'USD':'symbol':'1.0-0' }}</div>
+        </div>
+        <div>
+            <div class="muted">Stock</div>
+            <div class="value">{{ bike()!.stock }}</div>
+        </div>
+    </div>
+</article>
+} @else {
+<div class="card muted">Loading...</div>
+}

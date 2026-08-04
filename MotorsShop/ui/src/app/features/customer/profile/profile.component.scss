@@ -1,0 +1,41 @@
+// profile.component.scss
+.profile {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--spacing-sm) var(--spacing-md);
+    margin: var(--spacing-md) 0 var(--spacing-lg);
+}
+
+.profile dt {
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.profile dd {
+    margin: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+}
+
+.success {
+    color: var(--color-success);
+    background: #d4edda;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius);
+}

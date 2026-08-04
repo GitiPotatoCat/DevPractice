@@ -1,0 +1,111 @@
+<!-- profile.component.html -->
+@let c = customer();
+<-- Profile card -->
+    @if (c) {
+    <div class="card">
+        <h1>My Profile</h1>
+
+        @if (successMessage()) {
+        <p class="success">{{ successMessage() }}</p>
+        }
+
+        @if (!isEditing()) {
+        <!-- View mode -->
+        <dl class="profile">
+            <dt>Full name</dt>
+            <dd>{{ c.fullName }}</dd>
+
+            <dt>Email</dt>
+            <dd>{{ c.email }}</dd>
+
+            <dt>Phone</dt>
+            <dd>{{ c.phone || '—' }}</dd>
+
+            <dt>Address</dt>
+            <dd>{{ c.address || '—' }}</dd>
+        </dl>
+
+        <button class="primary" (click)="startEdit()">Edit profile</button>
+        } @else {
+        <!-- Edit mode -->
+        <form [formGroup]="form" (ngSubmit)="save()">
+            <label>
+                Full name
+                <input type="text" formControlName="fullName" />
+            </label>
+
+            <label>
+                Email
+                <input type="email" formControlName="email" />
+            </label>
+
+            <label>
+                Phone
+                <input type="text" formControlName="phone" />
+            </label>
+
+            <label>
+                Address
+                <input type="text" formControlName="address" />
+            </label>
+
+            @if (errorMessage()) {
+            <p class="error">{{ errorMessage() }}</p>
+            }
+
+            <div class="actions">
+                <button type="button" (click)="cancelEdit()" [disabled]="isSubmitting()">Cancel</button>
+                <button type="submit" class="primary" [disabled]="form.invalid || isSubmitting()">
+                    {{ isSubmitting() ? 'Saving...' : 'Save changes' }}
+                </button>
+            </div>
+        </form>
+        }
+    </div>
+
+
+    <-- Change-password card -->
+        <div class="card password-card">
+            <h2>Change Password</h2>
+
+            @if (passwordSuccess()) {
+            <p class="success">{{ passwordSuccess() }}</p>
+            }
+
+            <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+                <label>
+                    Current password
+                    <input type="password" formControlName="currentPassword" autocomplete="current-password" />
+                </label>
+
+                <label>
+                    New password
+                    <input type="password" formControlName="newPassword" autocomplete="new-password" />
+                    @if (passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.invalid) {
+                    <p class="error">At least 8 characters required.</p>
+                    }
+                </label>
+
+                @if (passwordFieldErrors() | keyvalue; as errors) {
+                @for (entry of errors; track entry.key) {
+                @for (msg of entry.value; track msg) {
+                <p class="error">{{ msg }}</p>
+                }
+                }
+                }
+
+                @if (passwordError()) {
+                <p class="error">{{ passwordError() }}</p>
+                }
+
+                <div class="actions">
+                    <button type="submit" class="primary" [disabled]="passwordForm.invalid || isChangingPassword()">
+                        {{ isChangingPassword() ? 'Changing...' : 'Change password' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        } @else {
+        <div class="card muted">Loading...</div>
+        }

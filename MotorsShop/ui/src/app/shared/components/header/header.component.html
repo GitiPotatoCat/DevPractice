@@ -1,0 +1,32 @@
+<!-- header.component.html -->
+<header class="header">
+    <div class="header-inner container">
+        <a routerLink="/" class="brand">MotorsShop</a>
+
+        <nav class="nav">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Browse</a>
+
+            @if (isAuthenticated()) {
+                <a routerLink="/my-orders" routerLinkActive="active">My Orders</a>
+                <a routerLink="/me" routerLinkActive="active">Profile</a>
+            }
+
+            @if (isAdmin()) {
+                <a routerLink="/admin" routerLinkActive="active">Admin</a>
+            }
+        </nav>
+
+        <div class="auth">
+            @if (isAuthenticated()) {
+            <span class="muted">{{ userName() }}</span>
+            <button (click)="logout()">Log out</button>
+                <a routerLink="/order" routerLinkActive="active">Place Order</a>
+                <a routerLink="/my-orders" routerLinkActive="active">My Orders</a>
+                <a routerLink="/me" routerLinkActive="active">Profile</a>
+            } @else {
+                <a routerLink="/login">Log in</a>
+                <a routerLink="/register">Register</a>
+            }
+        </div>
+    </div>
+</header>

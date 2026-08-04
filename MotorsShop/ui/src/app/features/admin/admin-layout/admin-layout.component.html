@@ -1,0 +1,18 @@
+<!-- admin-layout.component.html -->
+<div class="admin-shell">
+    <nav class="admin-nav">
+        <h2>Admin</h2>
+        <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Dashboard
+        </a>
+        <a routerLink="/admin/brands" routerLinkActive="active">Brands</a>
+        <a routerLink="/admin/categories" routerLinkActive="active">Categories</a>
+        <a routerLink="/admin/motorcycles" routerLinkActive="active">Motorcycles</a>
+        <a routerLink="/admin/customers" routerLinkActive="active">Customers</a>
+        <a routerLink="/admin/orders" routerLinkActive="active">Orders</a>
+    </nav>
+
+    <main class="admin-content">
+        <router-outlet />
+    </main>
+</div>

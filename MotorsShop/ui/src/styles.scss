@@ -1,0 +1,87 @@
+/* You can add global styles to this file, and also import other style files */
+// src/styles.scss
+
+:root {
+  --color-bg: #fafafa;
+  --color-surface: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-muted: #666;
+  --color-border: #e5e5e5;
+  --color-primary: #1a1a1a;
+  --color-primary-contrast: #ffffff;
+  --color-danger: #c0392b;
+  --color-success: #27ae60;
+
+  --radius: 6px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+button:hover { background: var(--color-bg); }
+button.primary {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-color: var(--color-primary);
+}
+button.danger {
+  background: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  width: 100%;
+}
+
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--spacing-lg);
+}
+
+.error { color: var(--color-danger); font-size: 0.9em; margin-top: var(--spacing-xs); }
+.muted { color: var(--color-text-muted); }

@@ -1,0 +1,41 @@
+<!-- motorcycle-list.component.html -->
+<div class="filters">
+    <input type="text" placeholder="Search by name or description..." [ngModel]="search()"
+        (ngModelChange)="onSearchChange($event)" />
+
+    <select [ngModel]="sortBy()" (ngModelChange)="onSortChange($event)">
+        <option value="">Sort by...</option>
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+        <option value="year">Year</option>
+    </select>
+
+    <select [ngModel]="sortOrder()" (ngModelChange)="onOrderChange($event)">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+    </select>
+</div>
+
+@if (items().length === 0) {
+<div class="card muted">No motorcycles match your search.</div>
+} @else {
+<div class="grid">
+    @for (bike of items(); track bike.id) {
+    <a class="card bike-card" [routerLink]="['/motorcycles', bike.id]">
+        <h3>{{ bike.name }}</h3>
+        <p class="muted">{{ bike.brandName }} · {{ bike.categoryName }}</p>
+        <p class="price">{{ bike.price | currency:'USD':'symbol':'1.0-0' }}</p>
+        <p class="muted">{{ bike.year }} · {{ bike.engineCc }}cc</p>
+        @if (bike.stock === 0) {
+        <p class="out-of-stock">Out of stock</p>
+        }
+    </a>
+    }
+</div>
+
+<div class="pagination">
+    <button (click)="previousPage()" [disabled]="!result().hasPrevious">Previous</button>
+    <span class="muted">Page {{ result().page }} of {{ totalPages() }} · {{ totalCount() }} items</span>
+    <button (click)="nextPage()" [disabled]="!result().hasNext">Next</button>
+</div>
+}

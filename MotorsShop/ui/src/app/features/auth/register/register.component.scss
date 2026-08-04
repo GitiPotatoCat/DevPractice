@@ -1,0 +1,17 @@
+// register.component.scss
+.auth-card {
+    max-width: 400px;
+    margin: var(--spacing-xl) auto;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}

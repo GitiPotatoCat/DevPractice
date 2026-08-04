@@ -1,0 +1,89 @@
+<!-- admin-customers.component.html -->
+<div class="card">
+    <div class="header-row">
+        <h1>Customers</h1>
+        <button class="primary" (click)="openCreate()">+ New Walk-in Customer</button>
+    </div>
+
+    @if (successMessage()) { <p class="success">{{ successMessage() }}</p> }
+    @if (errorMessage() && !isEditing()) { <p class="error">{{ errorMessage() }}</p> }
+
+    @if (isLoading()) {
+    <p class="muted">Loading...</p>
+    } @else if (customers().length === 0) {
+    <p class="muted">No customers yet.</p>
+    } @else {
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Type</th>
+                <th class="actions-col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (c of customers(); track c.id) {
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.fullName }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.phone || '—' }}</td>
+                <td>
+                    @if (c.applicationUserId) {
+                    <span class="badge badge-account">Account</span>
+                    } @else {
+                    <span class="badge badge-walkin">Walk-in</span>
+                    }
+                </td>
+                <td class="actions-col">
+                    <button (click)="openEdit(c)">Edit</button>
+                    <button class="danger" (click)="remove(c)">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+</div>
+
+@if (isEditing()) {
+<div class="dialog-backdrop" (click)="closeDialog()">
+    <div class="dialog-card" (click)="$event.stopPropagation()">
+        <h2>{{ isCreating() ? 'New Walk-in Customer' : 'Edit Customer' }}</h2>
+
+        <form [formGroup]="form" (ngSubmit)="save()">
+            <label>
+                Full name
+                <input type="text" formControlName="fullName" />
+            </label>
+
+            <label>
+                Email
+                <input type="email" formControlName="email" />
+            </label>
+
+            <label>
+                Phone
+                <input type="text" formControlName="phone" />
+            </label>
+
+            <label>
+                Address
+                <input type="text" formControlName="address" />
+            </label>
+
+            @if (errorMessage()) { <p class="error">{{ errorMessage() }}</p> }
+
+            <div class="actions">
+                <button type="button" (click)="closeDialog()" [disabled]="isSubmitting()">Cancel</button>
+                <button type="submit" class="primary" [disabled]="form.invalid || isSubmitting()">
+                    {{ isSubmitting() ? 'Saving...' : 'Save' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

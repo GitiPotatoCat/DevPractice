@@ -1,0 +1,9 @@
+@MotorsShop_HostAddress = https://localhost:7114
+
+
+### Show all brands
+GET {{MotorsShop_HostAddress}}/api/brands
+Accept: application/json
+
+### Show all motorcycles
+GET {{MotorsShop_HostAddress}}/api/motorcycles
