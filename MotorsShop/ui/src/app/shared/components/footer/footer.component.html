@@ -1,0 +1,62 @@
+<!-- footer.component.html -->
+<footer class="footer">
+    <div class="footer-inner">
+        <section class="footer-brand">
+            <a routerLink="/" class="brand" aria-label="MotorsShop home">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                         stroke="currentColor" stroke-width="2.2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="5.5" cy="17" r="3.5"/>
+                        <circle cx="18.5" cy="17" r="3.5"/>
+                        <path d="M5.5 17 10 8h4l4.5 9"/>
+                        <path d="M10 8h6"/>
+                    </svg>
+                </span>
+                <span class="brand-text">MotorsShop</span>
+            </a>
+            <p class="tagline">
+                Handpicked motorcycles for every rider. Discover, compare, and
+                bring home your next machine.
+            </p>
+        </section>
+
+        <section class="footer-col">
+            <h4>Shop</h4>
+            <ul>
+                <li><a routerLink="/">Browse all</a></li>
+                <li><a routerLink="/">New arrivals</a></li>
+                <li><a routerLink="/">Best sellers</a></li>
+            </ul>
+        </section>
+
+        <section class="footer-col">
+            <h4>Account</h4>
+            <ul>
+                <li><a routerLink="/me">Profile</a></li>
+                <li><a routerLink="/my-orders">My orders</a></li>
+                <li><a routerLink="/login">Log in</a></li>
+            </ul>
+        </section>
+
+        <section class="footer-col">
+            <h4>Support</h4>
+            <ul>
+                <li><a href="mailto:hello&#64;motorsshop.example">hello&#64;motorsshop.example</a></li>
+                <li><a href="tel:+18005550100">+1 (800) 555-0100</a></li>
+                <li><span class="muted">Mon–Sat · 9:00–18:00</span></li>
+            </ul>
+        </section>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="footer-bottom-inner">
+            <p class="muted small">© {{ year() }} MotorsShop. All rights reserved.</p>
+            <ul class="legal">
+                <li><a href="#">Terms</a></li>
+                <li><a href="#">Privacy</a></li>
+                <li><a href="#">Cookies</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>

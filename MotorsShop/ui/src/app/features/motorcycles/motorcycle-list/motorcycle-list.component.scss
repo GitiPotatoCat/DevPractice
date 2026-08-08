@@ -1,56 +1,245 @@
-// motorcycle-list.component.scss
-.filters {
+/* motorcycle-list.component.scss */
+
+/* --- Page hero ----------------------------------------------------- */
+.page-hero {
+    margin-bottom: var(--spacing-xl);
+}
+.page-hero h1 {
+    margin-bottom: var(--spacing-xs);
+}
+.page-hero p {
+    max-width: 60ch;
+    font-size: var(--fs-md);
+    margin: 0;
+}
+
+/* --- Filter bar ---------------------------------------------------- */
+.filter-bar {
     display: flex;
     gap: var(--spacing-md);
+    padding: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     margin-bottom: var(--spacing-lg);
     flex-wrap: wrap;
 }
 
-.filters input {
-    flex: 1 1 240px;
+.search {
+    position: relative;
+    flex: 1 1 300px;
+    min-width: 0;
+}
+.search .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-subtle);
+    pointer-events: none;
+}
+.search input {
+    padding-left: 42px;
+    border-color: transparent;
+    background: var(--color-bg-elev);
+}
+.search input:focus {
+    background: var(--color-surface);
 }
 
-.filters select {
-    flex: 0 0 160px;
+.controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+.controls select {
+    width: auto;
+    min-width: 150px;
+    border-color: transparent;
+    background: var(--color-bg-elev);
+    cursor: pointer;
+}
+.controls select:focus {
+    background: var(--color-surface);
 }
 
+/* --- Card grid ----------------------------------------------------- */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
+    grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
 }
 
 .bike-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
     color: inherit;
     text-decoration: none;
-    transition: border-color 0.15s;
+    transition: transform var(--dur) var(--ease),
+                box-shadow var(--dur) var(--ease),
+                border-color var(--dur) var(--ease);
+    box-shadow: var(--shadow-xs);
 }
-
 .bike-card:hover {
-    border-color: var(--color-primary);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: transparent;
     text-decoration: none;
+    color: inherit;
+}
+.bike-card:hover .bike-glyph {
+    transform: translateX(6px) rotate(-4deg);
+}
+.bike-card:hover .view-cta {
+    color: var(--color-primary);
+}
+.bike-card:hover .view-cta svg {
+    transform: translateX(3px);
 }
 
-.bike-card h3 {
-    margin: 0 0 var(--spacing-xs) 0;
+/* --- Media banner -------------------------------------------------- */
+.bike-media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.9);
+    overflow: hidden;
 }
-
-.bike-card .price {
-    font-size: 1.2em;
+.bike-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18), transparent 55%);
+    pointer-events: none;
+}
+.bike-glyph {
+    width: 62%;
+    max-width: 220px;
+    height: auto;
+    transition: transform 400ms var(--ease);
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+}
+.bike-year {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(15, 23, 42, 0.55);
+    color: #fff;
+    font-size: var(--fs-xs);
     font-weight: 600;
-    margin: var(--spacing-sm) 0;
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1;
+}
+.stock-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    box-shadow: var(--shadow-sm);
 }
 
-.bike-card .out-of-stock {
-    color: var(--color-danger);
+/* --- Card body ----------------------------------------------------- */
+.bike-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+    flex: 1;
+}
+.bike-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+.bike-name {
+    font-size: var(--fs-lg);
+    margin: 0;
+    line-height: 1.25;
+    /* Two-line clamp for consistent card height */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.bike-specs {
+    margin: 0;
+}
+.small { font-size: var(--fs-xs); }
+
+.bike-footer {
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    border-top: 1px dashed var(--color-border);
+}
+.price {
+    font-size: var(--fs-xl);
+    font-weight: 800;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+}
+.view-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-sm);
     font-weight: 600;
+    color: var(--color-text-muted);
+    transition: color var(--dur) var(--ease);
+}
+.view-cta svg {
+    transition: transform var(--dur) var(--ease);
 }
 
+/* --- Empty state --------------------------------------------------- */
+.empty {
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-lg);
+}
+.empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--color-bg-elev);
+    color: var(--color-text-subtle);
+    margin-bottom: var(--spacing-md);
+}
+.empty h3 { margin-bottom: 4px; }
+.empty p { margin: 0; }
+
+/* --- Pagination ---------------------------------------------------- */
 .pagination {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
 }
+.pagination strong { color: var(--color-text); }

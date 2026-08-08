@@ -1,31 +1,45 @@
 <!-- header.component.html -->
 <header class="header">
-    <div class="header-inner container">
-        <a routerLink="/" class="brand">MotorsShop</a>
+    <div class="header-inner">
+        <a routerLink="/" class="brand" aria-label="MotorsShop home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                     stroke="currentColor" stroke-width="2.2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="5.5" cy="17" r="3.5"/>
+                    <circle cx="18.5" cy="17" r="3.5"/>
+                    <path d="M5.5 17 10 8h4l4.5 9"/>
+                    <path d="M10 8h6"/>
+                </svg>
+            </span>
+            <span class="brand-text">MotorsShop</span>
+        </a>
 
-        <nav class="nav">
-            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Browse</a>
+        <nav class="nav" aria-label="Primary">
+            <a routerLink="/" routerLinkActive="active"
+               [routerLinkActiveOptions]="{ exact: true }">Browse</a>
 
             @if (isAuthenticated()) {
+                <a routerLink="/order"     routerLinkActive="active">Place Order</a>
                 <a routerLink="/my-orders" routerLinkActive="active">My Orders</a>
-                <a routerLink="/me" routerLinkActive="active">Profile</a>
+                <a routerLink="/me"        routerLinkActive="active">Profile</a>
             }
 
             @if (isAdmin()) {
-                <a routerLink="/admin" routerLinkActive="active">Admin</a>
+                <a routerLink="/admin" routerLinkActive="active" class="admin-link">Admin</a>
             }
         </nav>
 
         <div class="auth">
             @if (isAuthenticated()) {
-            <span class="muted">{{ userName() }}</span>
-            <button (click)="logout()">Log out</button>
-                <a routerLink="/order" routerLinkActive="active">Place Order</a>
-                <a routerLink="/my-orders" routerLinkActive="active">My Orders</a>
-                <a routerLink="/me" routerLinkActive="active">Profile</a>
+                <span class="user-chip" title="Signed in">
+                    <span class="avatar" aria-hidden="true">{{ initial() }}</span>
+                    <span class="user-name">{{ userName() }}</span>
+                </span>
+                <button class="ghost" type="button" (click)="logout()">Log out</button>
             } @else {
-                <a routerLink="/login">Log in</a>
-                <a routerLink="/register">Register</a>
+                <a routerLink="/login" class="btn ghost">Log in</a>
+                <a routerLink="/register" class="btn primary">Get started</a>
             }
         </div>
     </div>

@@ -68,6 +68,22 @@ export class MotorcycleListComponent {
   previousPage() { if (this.result().hasPrevious) this.page.set(this.page() - 1); }
   nextPage()     { if (this.result().hasNext)     this.page.set(this.page() + 1); }
 
+  /** Deterministic gradient per bike so cards look distinct without images. */
+  mediaGradient(id: number): string {
+    const palettes: Array<[string, string]> = [
+      ['#0f172a', '#334155'], // slate
+      ['#7c2d12', '#dc2626'], // red-clay
+      ['#1e3a8a', '#3b82f6'], // ocean
+      ['#064e3b', '#10b981'], // forest
+      ['#4c1d95', '#8b5cf6'], // violet
+      ['#78350f', '#f59e0b'], // amber
+      ['#831843', '#ec4899'], // rose
+      ['#134e4a', '#14b8a6'], // teal
+    ];
+    const [a, b] = palettes[Math.abs(id) % palettes.length];
+    return `linear-gradient(135deg, ${a} 0%, ${b} 100%)`;
+  }
+
   private emptyPage(): PagedResult<Motorcycle> {
     return {
       items: [], page: 1, pageSize: 9,

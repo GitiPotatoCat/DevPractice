@@ -15,6 +15,10 @@ export class HeaderComponent {
   isAuthenticated = this.auth.isAuthenticated;
   isAdmin = this.auth.isAdmin;
   userName = computed(() => this.auth.user()?.fullName ?? '');
+  initial = computed(() => {
+    const name = this.auth.user()?.fullName?.trim() ?? '';
+    return name ? name.charAt(0).toUpperCase() : '?';
+  });
 
   logout() {
     this.auth.logout();

@@ -1,4 +1,13 @@
-// app.component.scss
-main {
+/* app.component.scss */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
   padding-top: var(--spacing-lg);
+  padding-bottom: var(--spacing-2xl);
+  width: 100%;
 }
