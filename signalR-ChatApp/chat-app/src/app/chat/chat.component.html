@@ -1,0 +1,121 @@
+@if (!joined()) {
+<div class="join-screen">
+    <form (submit)="join($event)" class="join-card">
+        <div class="brand">— Signal Chat —</div>
+        <h1>Welcome.</h1>
+        <p class="subtitle">Enter a name to join the conversation.</p>
+        <label for="user">Display name</label>
+        <input id="user" [(ngModel)]="user" name="user" placeholder="e.g. Maya" autocomplete="off" required />
+        <button type="submit">Join chat</button>
+    </form>
+</div>
+} @else {
+<div class="layout">
+    <aside class="sidebar">
+        <header class="me">
+            <div class="avatar mine">{{ chat.me[0]?.toUpperCase() }}</div>
+            <div>
+                <div class="name">{{ chat.me }}</div>
+                <div class="status" [class.online]="chat.connected()">
+                    <span class="dot"></span>
+                    {{ chat.connected() ? 'Online' : 'Reconnecting…' }}
+                </div>
+            </div>
+        </header>
+
+        <div class="section-label">
+            <span>Channels</span>
+        </div>
+        <ul class="threads">
+            <li (click)="dmTarget.set(null)" [class.active]="dmTarget() === null">
+                <span class="marker">#</span>
+                <span class="label">public</span>
+                @if (unreadFor('public') > 0 && dmTarget() !== null) {
+                <span class="badge">{{ unreadFor('public') }}</span>
+                }
+            </li>
+        </ul>
+
+        <div class="section-label">
+            <span>Direct messages</span>
+            <span class="count">{{ chat.otherUsers().length }}</span>
+        </div>
+        <ul class="threads">
+            @for (u of chat.otherUsers(); track u) {
+            <li (click)="dmTarget.set(u)" [class.active]="dmTarget() === u">
+                <span class="marker">@</span>
+                <span class="label">{{ u }}</span>
+                @if (unreadFor(u) > 0 && dmTarget() !== u) {
+                <span class="badge">{{ unreadFor(u) }}</span>
+                }
+            </li>
+            }
+            @if (chat.otherUsers().length === 0) {
+            <li class="empty">No one else is online</li>
+            }
+        </ul>
+    </aside>
+
+    <main class="chat-pane">
+        <header class="chat-header">
+            <div class="title-row">
+                @if (dmTarget()) {
+                <div class="avatar small">{{ dmTarget()![0].toUpperCase() }}</div>
+                <span class="title">{{ dmTarget() }}</span>
+                <span class="eyebrow">Direct</span>
+                } @else {
+                <div class="avatar small hash">#</div>
+                <span class="title">public</span>
+                <span class="eyebrow">Channel</span>
+                }
+            </div>
+            <div class="meta">
+                <span class="dot"></span>
+                {{ chat.users().length }} {{ chat.users().length === 1 ? 'member' : 'members' }}
+            </div>
+        </header>
+
+        <div class="messages" #scroller>
+            @if (visibleMessages().length === 0) {
+            <div class="no-messages">
+                <div class="icon">✦</div>
+                <div class="title">It's quiet in here</div>
+                <div class="subtitle">Send a message to start the conversation.</div>
+            </div>
+            } @else {
+            @for (m of visibleMessages(); track $index; let i = $index) {
+            <div class="msg" [class.mine]="m.mine"
+                [class.same-author]="i > 0 && visibleMessages()[i-1].user === m.user">
+                <div class="avatar small" [class.mine]="m.mine">
+                    {{ m.user[0]?.toUpperCase() }}
+                </div>
+                <div class="stack">
+                    <div class="author">{{ m.user }}</div>
+                    <div class="card">{{ m.message }}</div>
+                    <div class="time">{{ m.timestamp | date:'shortTime' }}</div>
+                </div>
+            </div>
+            }
+            }
+        </div>
+
+        <div class="typing-row">
+            @if (typingLabel(); as label) {
+            <span>{{ label }}</span>
+            <span class="dots"><span></span><span></span><span></span></span>
+            }
+        </div>
+
+        <form (submit)="send($event)" class="composer">
+            <div class="field">
+                <input [(ngModel)]="text" name="text"
+                    [placeholder]="dmTarget() ? 'Message ' + dmTarget() : 'Message # public'" autocomplete="off"
+                    (input)="onInput()" (blur)="onBlur()" />
+                <button type="submit" [disabled]="!chat.connected() || !text.trim()">
+                    Send <span class="arrow">→</span>
+                </button>
+            </div>
+        </form>
+    </main>
+</div>
+}
