@@ -1,0 +1,359 @@
+﻿@page "/tasks"
+
+<PageTitle>Tasks Workspace - Finance & Insurance</PageTitle>
+
+<div style="@pageContainerStyle">
+    <!-- Header Area -->
+    <header style="@headerSectionStyle">
+        <!-- Current Date Format (Weekday, Month, Two Digit Date) -->
+        <p style="@dateTextStyle">@DateTime.Now.ToString("dddd, MMMM dd")</p>
+
+        <!-- User Greeting -->
+        <h2 style="@greetingHeadingStyle">Hi, @_username</h2>
+
+        <!-- AI Assistant Helper Statement & Bot Icon -->
+        <div style="@assistantContainerStyle">
+            <h2 style="@assistantHeadingStyle">How can I help you today?</h2>
+            <div style="@botIconCircleStyle">
+                <span class="bi bi-robot" style="@botIconStyle" aria-hidden="true"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 'My Tasks' Card with Scrolling Inner Body -->
+    <div style="@myTasksCardStyle">
+        <!-- Card Specular Top Refraction Prism -->
+        <div style="@glassRefractionStyle"></div>
+
+        <!-- Card Header -->
+        <div style="@cardHeaderStyle">
+            <div>
+                <h3 style="@cardTitleStyle">My Tasks</h3>
+                <span style="@cardSubtitleStyle">Finance & Underwriting Operations</span>
+            </div>
+            <span class="bi bi-shield-check" style="font-size: 22px; color: #1E3A1E;"></span>
+        </div>
+
+        <!-- Scrollable Table Container -->
+        <div style="@tableScrollContainerStyle">
+            <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+                @RenderTaskGroup("Not Started", "bi-dash-circle-fill", "#475569", GetGroupTasks("Not Started"))
+                @RenderTaskGroup("In Progress", "bi-arrow-repeat", "#7CB342", GetGroupTasks("In Progress"))
+                @RenderTaskGroup("Completed", "bi-check-circle-fill", "#388E3C", GetGroupTasks("Completed"))
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Task Action Button -->
+    <div style="margin-top: 1.5rem;">
+        <button style="@addButtonStyle"
+                @onclick="OpenModal"
+                @onmouseenter="() => _isAddHovered = true"
+                @onmouseleave="() => _isAddHovered = false">
+            <span class="bi bi-plus-lg" style="font-size: 18px;"></span>
+            <span>Add Task</span>
+        </button>
+    </div>
+</div>
+
+<!-- Glassmorphic Add Task Modal Overlay -->
+@if (_isModalOpen) {
+    <div style="@modalOverlayStyle">
+        <div style="@modalCardStyle">
+            <div style="@glassRefractionStyle"></div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+                <h3 style="@modalTitleStyle">Add New Finance Task</h3>
+                <span class="bi bi-x-lg" style="cursor: pointer; color: #1E3A1E; font-size: 18px;" @onclick="CloseModal"></span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div>
+                    <label style="@labelStyle">Task Description</label>
+                    <input type="text" @bind="_newTaskDescription" placeholder="e.g. Audit Q3 Commercial Liability Policies" style="@inputStyle" />
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="@labelStyle">Priority</label>
+                        <select @bind="_newTaskPriority" style="@inputStyle">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Critical">Critical</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="@labelStyle">Due Date</label>
+                        <input type="text" @bind="_newTaskDueDate" placeholder="e.g. Aug 31" style="@inputStyle" />
+                    </div>
+                </div>
+
+                <div>
+                    <label style="@labelStyle">Initial Group Status</label>
+                    <select @bind="_newTaskStatus" style="@inputStyle">
+                        <option value="Not Started">Not Started</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 0.75rem;">
+                    <button style="@modalSecondaryBtnStyle" @onclick="CloseModal">Cancel</button>
+                    <button style="@modalPrimaryBtnStyle" @onclick="SaveTask">Save Task</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string _username = "Alex";
+    private bool _isAddHovered = false;
+    private bool _isModalOpen = false;
+
+    // New Task Form Fields
+    private string _newTaskDescription = string.Empty;
+    private string _newTaskPriority = "Medium";
+    private string _newTaskDueDate = "Aug 30";
+    private string _newTaskStatus = "Not Started";
+
+    // Quicksand Font Stack
+    private string fontFamily = "'Quicksand', system-ui, -apple-system, sans-serif";
+
+    // -------------------------------------------------------------
+    // Pantone Color Gradients & Tokens
+    // -------------------------------------------------------------
+    // Date Gradient: Pantone Slate Lime Brown (#6B705C) to Pantone Slate Pale Cherry (#DDBEA9)
+    private string dateGradient = "linear-gradient(135deg, #6B705C 0%, #DDBEA9 100%)";
+
+    // AI Helper Statement Gradient: Pantone Leaf Green (#388E3C), Lime Green (#7CB342), Light Gold (#FBC02D)
+    private string helperGradient = "linear-gradient(135deg, #388E3C 0%, #7CB342 50%, #FBC02D 100%)";
+
+    // 'My Tasks' Card Gradient: Pantone Leaf Green (#388E3C) to Lime Green (#7CB342)
+    private string myTasksCardGradient = "linear-gradient(135deg, rgba(56, 142, 60, 0.12) 0%, rgba(124, 179, 66, 0.18) 100%)";
+
+    // Add Task Button Gradient: Pantone Lime Green (#7CB342) to Light Gold (#FBC02D)
+    private string addButtonGradient = "linear-gradient(135deg, #7CB342 0%, #FBC02D 100%)";
+
+    // Pantone Slate Black No-Gradient Accent
+    private string slateBlack = "#1A1D20";
+
+    // -------------------------------------------------------------
+    // Finance & Insurance Mock Task Data
+    // -------------------------------------------------------------
+    private List<TaskItem> _tasks = new()
+    {
+        // Not Started Group
+        new("Review Commercial Property Underwriting Risk for TechCorp", "Critical", "Aug 28", "Not Started"),
+        new("Reconcile Q3 Reinsurance Premium Payments & Claims Receipts", "High", "Aug 29", "Not Started"),
+        new("Audit High-Yield Municipal Bond Investment Portfolio", "Medium", "Sep 02", "Not Started"),
+
+        // In Progress Group
+        new("Verify Life Insurance Policy Claim #88491 Compliance Documentation", "High", "Aug 27", "In Progress"),
+        new("Process Auto Actuarial Loss Ratio Calculation for Q2", "Critical", "Aug 27", "In Progress"),
+        new("Perform Anti-Money Laundering (AML) Screening on New Accounts", "Medium", "Aug 30", "In Progress"),
+
+        // Completed Group
+        new("Finalize Corporate Health Insurance Renewal Statements", "Low", "Aug 25", "Completed"),
+        new("Approve Commercial Loan Credit Risk Assessment Report", "High", "Aug 24", "Completed")
+    };
+
+    private IEnumerable<TaskItem> GetGroupTasks(string status) => _tasks.Where(t => t.Status == status);
+
+    // -------------------------------------------------------------
+    // Render Fragments for Grouped Tables
+    // -------------------------------------------------------------
+    private RenderFragment RenderTaskGroup(string groupName, string iconClass, string iconColor, IEnumerable<TaskItem> groupTasks) => __builder => {
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Group Header -->
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span class="bi @iconClass" style="font-size: 14px; color: @iconColor !important;"></span>
+                <span style="font-size: 14px; font-weight: 700; color: #1E3A1E; letter-spacing: 0.2px;">@groupName (@groupTasks.Count())</span>
+            </div>
+
+            <!-- Table Header (Name, Priority, Due Date) -->
+            <div style="@tableHeaderStyle">
+                <span style="flex: 2.5;">Name (Description)</span>
+                <span style="flex: 1; text-align: center;">Priority</span>
+                <span style="flex: 1; text-align: right;">Due Date</span>
+            </div>
+
+            <!-- Task Rows -->
+            @if (!groupTasks.Any()) {
+                <div style="padding: 10px 16px; font-size: 12px; color: #4A6B4A; font-style: italic;">No tasks in this group.</div>
+            }
+            else {
+                @foreach (var task in groupTasks) {
+                    <div style="@tableRowStyle">
+                        <div style="flex: 2.5; display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked="@(task.Status == "Completed")" @onchange="() => ToggleTaskStatus(task)" style="accent-color: #388E3C; cursor: pointer; width: 16px; height: 16px; flex-shrink: 0;" />
+                            <span style="@(task.Status == "Completed" ? "text-decoration: line-through; opacity: 0.65; color: #1E3A1E; font-weight: 600;" : "color: #1E3A1E; font-weight: 700;")">@task.Name</span>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <span style="@GetPriorityBadgeStyle(task.Priority)">@task.Priority</span>
+                        </div>
+                        <div style="flex: 1; text-align: right; font-size: 13px; font-weight: 600; color: #4A6B4A;">
+                            @task.DueDate
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    };
+
+    // -------------------------------------------------------------
+    // Page Component Styles & Scroll Configurations
+    // -------------------------------------------------------------
+    private string pageContainerStyle => $"max-width: 1200px; margin: 0 auto; padding: 1.5rem 0; font-family: {fontFamily}; height: calc(100vh - 80px); overflow-y: auto;";
+
+    private string headerSectionStyle = "margin-bottom: 1.75rem;";
+
+    private string dateTextStyle => $@"
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin: 0 0 0.4rem 0;
+        background: {dateGradient};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 0.2px;
+    ";
+
+    private string greetingHeadingStyle => $"font-size: 1.75rem; font-weight: 700; color: {slateBlack}; margin: 0 0 0.25rem 0; letter-spacing: -0.3px;";
+
+    private string assistantContainerStyle = "display: flex; align-items: center; gap: 12px; margin-top: 0.25rem;";
+
+    private string assistantHeadingStyle => $@"
+        font-size: 2.25rem;
+        font-weight: 800;
+        margin: 0;
+        background: {helperGradient};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    ";
+
+    private string botIconCircleStyle => $@"
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: {helperGradient};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(56, 142, 60, 0.3);
+        flex-shrink: 0;
+    ";
+
+    private string botIconStyle = "font-size: 20px; color: #FFFFFF !important;";
+
+    private string myTasksCardStyle => $@"
+        position: relative;
+        padding: 1.75rem;
+        border-radius: 24px;
+        background: {myTasksCardGradient};
+        backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(56, 142, 60, 0.2);
+        box-shadow: 0 8px 32px -4px rgba(56, 142, 60, 0.12);
+        overflow: hidden;
+    ";
+
+    private string glassRefractionStyle = "position: absolute; top: 0; left: 10%; right: 10%; height: 1.5px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0) 100%); pointer-events: none;";
+
+    private string cardHeaderStyle = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;";
+    private string cardTitleStyle = "font-size: 1.4rem; font-weight: 800; color: #1E3A1E; margin: 0;";
+    private string cardSubtitleStyle = "font-size: 0.85rem; color: #4A6B4A; font-weight: 600;";
+
+    // Table Scroll Style
+    private string tableScrollContainerStyle = "max-height: 460px; overflow-y: auto; padding-right: 6px;";
+
+    private string tableHeaderStyle = "display: flex; padding: 8px 16px; font-size: 12px; font-weight: 700; color: #4A6B4A; text-transform: uppercase; letter-spacing: 0.5px;";
+    private string tableRowStyle = "display: flex; align-items: center; padding: 12px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.88); border: 1px solid rgba(56, 142, 60, 0.08); box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s ease; margin-bottom: 6px;";
+
+    private string addButtonStyle => $@"
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 26px;
+        border-radius: 14px;
+        border: none;
+        background: {addButtonGradient};
+        color: #1E3A1E;
+        font-family: {fontFamily};
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        box-shadow: 0 6px 20px -2px rgba(124, 179, 66, 0.35);
+        transform: {(_isAddHovered ? "translateY(-2px)" : "translateY(0)")};
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    ";
+
+    // Priority Badges
+    private string GetPriorityBadgeStyle(string priority)
+    {
+        string bg = priority switch
+        {
+            "Critical" => "rgba(239, 68, 68, 0.15)",
+            "High" => "rgba(251, 192, 45, 0.25)",
+            "Medium" => "rgba(124, 179, 66, 0.2)",
+            _ => "rgba(56, 142, 60, 0.12)"
+        };
+
+        string color = priority switch
+        {
+            "Critical" => "#DC2626",
+            "High" => "#D97706",
+            "Medium" => "#33691E",
+            _ => "#2E7D32"
+        };
+
+        return $"display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; background: {bg}; color: {color};";
+    }
+
+    // Modal Glassmorphic Overlay Styles
+    private string modalOverlayStyle = "position: fixed; inset: 0; background: rgba(15, 26, 15, 0.45); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000;";
+    private string modalCardStyle => $"position: relative; width: 100%; max-width: 480px; padding: 2rem; border-radius: 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(56, 142, 60, 0.2); box-shadow: 0 12px 40px rgba(0,0,0,0.15); font-family: {fontFamily};";
+    private string modalTitleStyle = "font-size: 1.25rem; font-weight: 800; color: #1E3A1E; margin: 0;";
+    private string labelStyle = "display: block; font-size: 12px; font-weight: 700; color: #4A6B4A; margin-bottom: 4px;";
+    private string inputStyle => $"width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(56, 142, 60, 0.2); background: rgba(245, 248, 245, 0.8); font-family: {fontFamily}; font-size: 13.5px; color: #1E3A1E; outline: none; box-sizing: border-box;";
+
+    private string modalPrimaryBtnStyle => $"padding: 10px 20px; border-radius: 10px; border: none; background: {addButtonGradient}; color: #1E3A1E; font-family: {fontFamily}; font-weight: 800; font-size: 0.875rem; cursor: pointer;";
+    private string modalSecondaryBtnStyle => $"padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(56, 142, 60, 0.2); background: transparent; color: #4A6B4A; font-family: {fontFamily}; font-weight: 700; font-size: 0.875rem; cursor: pointer;";
+
+    // Modal Controls
+    private void OpenModal() => _isModalOpen = true;
+    private void CloseModal() => _isModalOpen = false;
+
+    private void SaveTask()
+    {
+        if (!string.IsNullOrWhiteSpace(_newTaskDescription)) {
+            _tasks.Insert(0, new TaskItem(_newTaskDescription, _newTaskPriority, _newTaskDueDate, _newTaskStatus));
+            _newTaskDescription = string.Empty;
+            _isModalOpen = false;
+        }
+    }
+
+    private void ToggleTaskStatus(TaskItem task)
+    {
+        task.Status = task.Status == "Completed" ? "In Progress" : "Completed";
+    }
+
+    // Task Item Model
+    public class TaskItem
+    {
+        public string Name { get; set; }
+        public string Priority { get; set; }
+        public string DueDate { get; set; }
+        public string Status { get; set; }
+
+        public TaskItem(string name, string priority, string dueDate, string status)
+        {
+            Name = name;
+            Priority = priority;
+            DueDate = dueDate;
+            Status = status;
+        }
+    }
+}
+

@@ -1,0 +1,277 @@
+﻿@inject IJSRuntime JSRuntime
+
+@if (IsOpen) {
+    <!-- Backdrop Overlay to close flyout when clicking outside -->
+    <div style="@backdropOverlayStyle" @onclick="CloseDrawer"></div>
+
+    <!-- Glassmorphic Notification Flyout Panel -->
+    <div style="@flyoutPanelStyle">
+        <div style="@glassRefractionLineStyle"></div>
+
+        <!-- Header Row -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem 1rem 1.5rem; border-bottom: 1px solid rgba(56, 142, 60, 0.12);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h3 style="@headerTitleStyle">Notifications</h3>
+                @if (UnreadCount > 0) {
+                    <span style="@unreadBadgeStyle">@UnreadCount New</span>
+                }
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                @if (UnreadCount > 0) {
+                    <button style="@textActionButtonStyle" @onclick="MarkAllAsRead" title="Mark all as read">
+                        <i class="bi bi-check2-all" style="font-size: 15px;"></i>
+                        <span>Read All</span>
+                    </button>
+                }
+                <button style="@closeButtonStyle" @onclick="CloseDrawer" aria-label="Close notifications">
+                    <i class="bi bi-x-lg" style="font-size: 13px; color: #64748B;"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Tab Bar -->
+        <div style="display: flex; align-items: center; gap: 6px; padding: 10px 1.5rem; background: rgba(245, 248, 245, 0.5); border-bottom: 1px solid rgba(56, 142, 60, 0.08);">
+            <button style="@GetTabStyle("all")" @onclick='() => _activeTab = "all"'>
+                All (@_notifications.Count)
+            </button>
+            <button style="@GetTabStyle("unread")" @onclick='() => _activeTab = "unread"'>
+                Unread (@UnreadCount)
+            </button>
+        </div>
+
+        <!-- Notification Items Scroll Container -->
+        <div style="@scrollListStyle">
+            @if (FilteredNotifications.Any()) {
+                @foreach (var item in FilteredNotifications) {
+                    <div style="@GetItemCardStyle(item.IsRead)" @onclick="() => ToggleItemRead(item)">
+                        <div style="@GetIconBoxStyle(item.CategoryColor)">
+                            <i class="@item.IconClass" style="font-size: 15px; color: #1E232A;"></i>
+                        </div>
+
+                        <div style="flex-grow: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 3px;">
+                                <span style="@itemTitleStyle">@item.Title</span>
+                                <span style="@timestampStyle">@item.FormattedTime</span>
+                            </div>
+                            <p style="@itemMessageStyle">@item.Message</p>
+                        </div>
+
+                        @if (!item.IsRead) {
+                            <span style="@unreadDotStyle" title="Unread"></span>
+                        }
+                    </div>
+                }
+            }
+            else {
+                <div style="text-align: center; padding: 2.5rem 1rem;">
+                    <i class="bi bi-bell-slash" style="font-size: 28px; color: #94A3B8; display: block; margin-bottom: 8px;"></i>
+                    <span style="font-size: 13px; font-weight: 700; color: #64748B;">No notifications in this view</span>
+                </div>
+            }
+        </div>
+
+        <!-- Footer Bar -->
+        <div style="padding: 10px 1.5rem; text-align: center; background: rgba(245, 248, 245, 0.6); border-top: 1px solid rgba(56, 142, 60, 0.1);">
+            <span style="font-size: 11.5px; font-weight: 700; color: #388E3C; cursor: pointer;" @onclick="ClearAll">
+                Clear All Activity
+            </span>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public EventCallback<int> UnreadCountChanged { get; set; }
+
+    private string _activeTab = "all";
+
+    private const string fontFamily = "'Quicksand', system-ui, -apple-system, sans-serif";
+    private const string slateBlack = "#1E232A";
+    private const string slateGray = "#64748B";
+
+    private List<NotificationModel> _notifications = new()
+    {
+        new(1, "Disbursement Approved", "₹ 4.2M disbursement requested for Maharashtra state project approved.", "5m ago", "finance", "bi-cash-stack", "#388E3C", false),
+        new(2, "Task Assignment", "You were assigned to 'Q3 Actuarial Portfolio Audit' by Lead Manager.", "25m ago", "task", "bi-check2-square", "#7CB342", false),
+        new(3, "New EOI Request", "89 new Expression of Interest requests submitted from Karnataka region.", "2h ago", "request", "bi-file-earmark-text-fill", "#FBC02D", false),
+        new(4, "System Backup Complete", "Automated cloud snapshot completed with zero compliance flags.", "1d ago", "system", "bi-shield-check", "#64748B", true)
+    };
+
+    private IEnumerable<NotificationModel> FilteredNotifications =>
+        _activeTab == "unread" ? _notifications.Where(n => !n.IsRead) : _notifications;
+
+    public int UnreadCount => _notifications.Count(n => !n.IsRead);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await NotifyUnreadCountChanged();
+    }
+
+    private async Task ToggleItemRead(NotificationModel item)
+    {
+        item.IsRead = !item.IsRead;
+        await NotifyUnreadCountChanged();
+    }
+
+    private async Task MarkAllAsRead()
+    {
+        foreach (var item in _notifications) {
+            item.IsRead = true;
+        }
+        await NotifyUnreadCountChanged();
+    }
+
+    private async Task ClearAll()
+    {
+        _notifications.Clear();
+        await NotifyUnreadCountChanged();
+    }
+
+    private async Task CloseDrawer()
+    {
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(IsOpen);
+    }
+
+    private async Task NotifyUnreadCountChanged()
+    {
+        if (UnreadCountChanged.HasDelegate) {
+            await UnreadCountChanged.InvokeAsync(UnreadCount);
+        }
+    }
+
+    // Styles
+    private string backdropOverlayStyle = "position: fixed; inset: 0; z-index: 998; background: transparent;";
+
+    private string flyoutPanelStyle => $@"
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 380px;
+        max-width: 90vw;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(28px) saturate(180%);
+        -webkit-backdrop-filter: blur(28px) saturate(180%);
+        border: 1px solid rgba(56, 142, 60, 0.16);
+        box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.12);
+        z-index: 999;
+        overflow: hidden;
+        font-family: {fontFamily};
+        animation: flyoutSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    ";
+
+    private string glassRefractionLineStyle = "position: absolute; top: 0; left: 10%; right: 10%; height: 1.5px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0) 100%); pointer-events: none;";
+    private string headerTitleStyle => $"font-size: 1.05rem; font-weight: 800; color: {slateBlack}; margin: 0;";
+    private string unreadBadgeStyle = "padding: 3px 8px; border-radius: 99px; background: rgba(56, 142, 60, 0.12); color: #388E3C; font-size: 10.5px; font-weight: 800;";
+
+    private string textActionButtonStyle => $@"
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: none;
+        background: transparent;
+        color: #388E3C;
+        font-family: {fontFamily};
+        font-size: 11.5px;
+        font-weight: 800;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+    ";
+
+    private string closeButtonStyle = "border: none; background: rgba(100, 116, 139, 0.08); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;";
+    private string scrollListStyle = "max-height: 360px; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;";
+
+    private string GetTabStyle(string tab)
+    {
+        bool isActive = _activeTab == tab;
+        return $@"
+            padding: 4px 12px;
+            border-radius: 8px;
+            border: none;
+            background: {(isActive ? "#FFFFFF" : "transparent")};
+            color: {(isActive ? "#388E3C" : slateGray)};
+            font-family: {fontFamily};
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: {(isActive ? "0 2px 6px rgba(0,0,0,0.04)" : "none")};
+            transition: all 0.2s ease;
+        ";
+    }
+
+    private string GetItemCardStyle(bool isRead) => $@"
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 16px;
+        background: {(isRead ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 0.95)")};
+        border: 1px solid {(isRead ? "rgba(100, 116, 139, 0.08)" : "rgba(56, 142, 60, 0.2)")};
+        box-shadow: {(isRead ? "none" : "0 4px 12px rgba(56, 142, 60, 0.06)")};
+        cursor: pointer;
+        transition: all 0.2s ease;
+    ";
+
+    private string GetIconBoxStyle(string color) => $@"
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: {color}1A;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    ";
+
+    private string keyframeFlyOutSlideInStyle = @"
+        @keyframes flyoutSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+    ";
+
+    private string itemTitleStyle => $"font-size: 12.5px; font-weight: 800; color: {slateBlack};";
+    private string timestampStyle => $"font-size: 10px; font-weight: 700; color: {slateGray};";
+    private string itemMessageStyle => $"font-size: 11.5px; color: {slateGray}; font-weight: 600; line-height: 1.4; margin: 0;";
+    private string unreadDotStyle = "width: 8px; height: 8px; border-radius: 50%; background: #388E3C; flex-shrink: 0; margin-top: 4px; box-shadow: 0 0 6px #388E3C;";
+
+    public class NotificationModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string FormattedTime { get; set; }
+        public string Category { get; set; }
+        public string IconClass { get; set; }
+        public string CategoryColor { get; set; }
+        public bool IsRead { get; set; }
+
+        public NotificationModel(int id, string title, string message, string formattedTime, string category, string iconClass, string categoryColor, bool isRead)
+        {
+            Id = id;
+            Title = title;
+            Message = message;
+            FormattedTime = formattedTime;
+            Category = category;
+            IconClass = iconClass;
+            CategoryColor = categoryColor;
+            IsRead = isRead;
+        }
+    }
+}
+
+<style>
+   @keyframeFlyOutSlideInStyle
+</style>
+

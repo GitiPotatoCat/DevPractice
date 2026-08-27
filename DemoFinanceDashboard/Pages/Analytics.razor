@@ -1,0 +1,679 @@
+﻿@page "/analytics"
+
+<PageTitle>Analytics - Finance & Investment</PageTitle>
+
+<div style="@pageContainerStyle">
+    <!-- Header Section -->
+    <header style="@headerSectionStyle">
+        <!-- Left Upper Heading & Month Cycle Dropdown -->
+        <div>
+            <h2 style="@headingStyle">Analytics</h2>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <select value="@_selectedDateRange" @onchange="OnDateRangeChanged" style="@dateDropdownStyle">
+                    <option value="Jul 26 - Aug 26, 2026">Jul 26 - Aug 26, 2026</option>
+                    <option value="Jun 26 - Jul 25, 2026">Jun 26 - Jul 25, 2026</option>
+                    <option value="May 26 - Jun 25, 2026">May 26 - Jun 25, 2026</option>
+                    <option value="Apr 26 - May 25, 2026">Apr 26 - May 25, 2026</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Right Upper Metrics Box Widgets (EOI Sent & New Requests) -->
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <!-- Widget 1: EOI Sent -->
+            <div style="@metricWidgetBoxStyle">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                    <div>
+                        <h2 style="@metricNumberStyle">142</h2>
+                        <h4 style="@metricLabelStyle">EOI Sent</h4>
+                    </div>
+                    <div style="@valueBadgeStyle">₹ 22.5 M</div>
+                </div>
+            </div>
+
+            <!-- Widget 2: New Requests -->
+            <div style="@metricWidgetBoxStyle">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                    <div>
+                        <h2 style="@metricNumberStyle">89</h2>
+                        <h4 style="@metricLabelStyle">New Requests</h4>
+                    </div>
+                    <div style="@valueBadgeStyle">₹ 14.8 M</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2x2 Grid (2 Rows x 2 Columns) Modern Glass Cards -->
+    <div style="@gridContainerStyle">
+
+        <!-- CARD 1 (Row 1, Col 1): Borrower by State -->
+        <div style="@cardContainerStyle">
+            <div style="@glassRefractionStyle"></div>
+            <h3 style="@cardTitleStyle">Borrower by State</h3>
+
+            <div style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                <!-- Total Amount Summary & Gradient Half Donut Arc -->
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <span style="font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase;">Total Amount (INR)</span>
+                        <div style="font-size: 1.85rem; font-weight: 800; color: #1E232A;">₹ 25.7 M</div>
+                    </div>
+
+                    <!-- SVG Half-Donut Chart Arc -->
+                    <div style="position: relative; width: 80px; height: 45px;">
+                        <svg viewBox="0 0 100 50" style="width: 100%; height: 100%;">
+                            <defs>
+                                <linearGradient id="arcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#388E3C" />
+                                    <stop offset="50%" stop-color="#7CB342" />
+                                    <stop offset="100%" stop-color="#FBC02D" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="12" stroke-linecap="round" />
+                            <path d="M 10 50 A 40 40 0 0 1 82 25" fill="none" stroke="url(#arcGradient)" stroke-width="12" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Dashed Line State Revenue Items -->
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 0.5rem;">
+                    @foreach (var stateItem in _stateRevenues) {
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 13.5px; font-weight: 700; color: #1E232A;">@stateItem.StateName</span>
+                            <div style="@dashedLineStyle"></div>
+                            <span style="font-size: 13.5px; font-weight: 800; color: #1E232A;">₹ @stateItem.FormattedAmount</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2 (Row 1, Col 2): Map Preview with Image & Heatmap Overlay -->
+        <div style="@cardContainerStyle">
+            <div style="@glassRefractionStyle"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="@cardTitleStyle">Map Preview</h3>
+                <span class="bi bi-geo-alt-fill" style="color: #7CB342; font-size: 18px;"></span>
+            </div>
+
+            <!-- HeatMap Legend & Image Preview Container -->
+            <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 10px; height: 100%;">
+                <!-- HeatMap Legend Thresholds -->
+                <div style="display: flex; align-items: center; gap: 14px; font-size: 11.5px; font-weight: 700;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #EF4444; box-shadow: 0 0 6px #EF4444;"></span>
+                        <span style="color: #64748B;">&gt;60% Red</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #F97316; box-shadow: 0 0 6px #F97316;"></span>
+                        <span style="color: #64748B;">&lt;60% Orange</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
+                        <span style="color: #64748B;">&lt;20% Green</span>
+                    </div>
+                </div>
+
+                <!-- Relative Wrapper for Map Image and Overlay Hotspots -->
+                <div style="@mapContainerStyle">
+                    <div style="position: relative; width: 100%; max-width: 320px; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                        <!-- Base India Map Image -->
+                        <img src="map.jpg" alt="India Map" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
+
+                        <!-- Heatmap Hotspot 1: Maharashtra (MH) - Red (>60%) -->
+                        <div style="position: absolute; top: 62%; left: 47%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; pointer-events: none; z-index: 2;">
+                            <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+                                <span style="position: absolute; width: 22px; height: 22px; border-radius: 50%; background: rgba(239, 68, 68, 0.4); animation: pulseRed 2s infinite ease-out;"></span>
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; box-shadow: 0 0 8px #EF4444;"></span>
+                            </div>
+                            <span style="@mapBadgeStyle">MH (68%)</span>
+                        </div>
+
+                        <!-- Heatmap Hotspot 2: Gujarat (GJ) - Orange (<60%) -->
+                        <div style="position: absolute; top: 48%; left: 42%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; pointer-events: none; z-index: 2;">
+                            <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+                                <span style="position: absolute; width: 18px; height: 18px; border-radius: 50%; background: rgba(249, 115, 22, 0.4); animation: pulseOrange 2s infinite ease-out;"></span>
+                                <span style="width: 7px; height: 7px; border-radius: 50%; background: #F97316; box-shadow: 0 0 6px #F97316;"></span>
+                            </div>
+                            <span style="@mapBadgeStyle">GJ (38%)</span>
+                        </div>
+
+                        <!-- Heatmap Hotspot 3: Karnataka (KA) - Green (<20%) -->
+                        <div style="position: absolute; top: 81%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; pointer-events: none; z-index: 2;">
+                            <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+                                <span style="position: absolute; width: 16px; height: 16px; border-radius: 50%; background: rgba(16, 185, 129, 0.4); animation: pulseGreen 2s infinite ease-out;"></span>
+                                <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981; box-shadow: 0 0 6px #10B981;"></span>
+                            </div>
+                            <span style="@mapBadgeStyle">KA (18%)</span>
+                        </div>
+
+                        <!-- Heatmap Hotspot 4: Kolkata - Red (>60%) -->
+                        <div style="position: absolute; top: 50%; left: 73%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; pointer-events: none; z-index: 2;">
+                            <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+                                <span style="position: absolute; width: 22px; height: 22px; border-radius: 50%; background: rgba(239, 68, 68, 0.4); animation: pulseRed 2s infinite ease-out;"></span>
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; box-shadow: 0 0 8px #EF4444;"></span>
+                            </div>
+                            <span style="@mapBadgeStyle">Kolkata (62%)</span>
+                        </div>
+
+                        <!-- Heatmap Hotspot 5: Assam - Orange (<60%) -->
+                        <div style="position: absolute; top: 36%; left: 79%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; pointer-events: none; z-index: 2;">
+                            <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+                                <span style="position: absolute; width: 18px; height: 18px; border-radius: 50%; background: rgba(249, 115, 22, 0.4); animation: pulseOrange 2s infinite ease-out;"></span>
+                                <span style="width: 7px; height: 7px; border-radius: 50%; background: #F97316; box-shadow: 0 0 6px #F97316;"></span>
+                            </div>
+                            <span style="@mapBadgeStyle">Assam (42%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyframe Animations for Heatmap Pulsing Rings -->
+        <style>
+                    @keyframeStyles
+        </style>
+
+        <!-- CARD 3 (Row 2, Col 1): DYNAMIC & INTERACTIVE Finance Graph Details -->
+        <div style="@cardContainerStyle">
+            <div style="@glassRefractionStyle"></div>
+
+            <!-- Header Row with Controls & Total Metric -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <div>
+                    <h3 style="@cardTitleStyle">Finance Graph Details</h3>
+                    <span style="font-size: 11.5px; font-weight: 700; color: #64748B;">Total Disbursed: ₹@Card3TotalDisbursements.ToString("F1")M</span>
+                </div>
+
+                <!-- Time Range Buttons -->
+                <div style="display: flex; align-items: center; gap: 4px; background: rgba(100, 116, 139, 0.08); padding: 3px; border-radius: 8px;">
+                    <button style="@GetCard3RangeBtnStyle("1M")" @onclick='() => ChangeCard3Range("1M")'>1M</button>
+                    <button style="@GetCard3RangeBtnStyle("3M")" @onclick='() => ChangeCard3Range("3M")'>3M</button>
+                    <button style="@GetCard3RangeBtnStyle("YTD")" @onclick='() => ChangeCard3Range("YTD")'>YTD</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Legend -->
+            <div style="display: flex; align-items: center; gap: 14px; font-size: 11px; font-weight: 700; margin-bottom: 0.5rem;">
+                <span style="color: #388E3C; display: flex; align-items: center; gap: 4px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #388E3C;"></span> Disbursements
+                </span>
+                <span style="color: #64748B; display: flex; align-items: center; gap: 4px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #94A3B8;"></span> Repayments
+                </span>
+            </div>
+
+            <!-- Interactive Area Chart SVG -->
+            <div style="position: relative; margin-top: 0.25rem;">
+                <svg viewBox="0 0 400 150" style="width: 100%; height: 140px; overflow: visible; cursor: pointer;">
+                    <defs>
+                        <linearGradient id="card3AreaGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#388E3C" stop-opacity="0.45" />
+                            <stop offset="100%" stop-color="#7CB342" stop-opacity="0.0" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Gridlines -->
+                    <line x1="0" y1="30" x2="400" y2="30" stroke="rgba(0,0,0,0.05)" stroke-dasharray="4 4" />
+                    <line x1="0" y1="75" x2="400" y2="75" stroke="rgba(0,0,0,0.05)" stroke-dasharray="4 4" />
+                    <line x1="0" y1="120" x2="400" y2="120" stroke="rgba(0,0,0,0.05)" stroke-dasharray="4 4" />
+
+                    <!-- Area Fill Polygon -->
+                    <polygon points="@Card3AreaPoints" fill="url(#card3AreaGradient)" style="transition: all 0.4s ease;" />
+
+                    <!-- Dynamic Smooth Paths -->
+                    <path d="@Card3DisbursementPath" fill="none" stroke="#388E3C" stroke-width="3" stroke-linecap="round" style="transition: all 0.4s ease;" />
+                    <path d="@Card3RepaymentPath" fill="none" stroke="#94A3B8" stroke-width="2" stroke-dasharray="5 5" style="transition: all 0.4s ease;" />
+
+                    <!-- Hover Point Circles & Crosshairs -->
+                    @for (int i = 0; i < ActiveCard3DataSet.Count; i++) {
+                        var pt = ActiveCard3DataSet[i];
+                        var index = i;
+                        bool isHovered = _card3HoveredIndex == index;
+
+                        if (isHovered) {
+                            <line x1="@pt.X" y1="10" x2="@pt.X" y2="130" stroke="#388E3C" stroke-width="1.5" stroke-dasharray="2 2" />
+                        }
+
+                        <circle cx="@pt.X" cy="@pt.DisbursementY" r="@(isHovered ? "7" : "4")"
+                                fill="@(isHovered ? "#FBC02D" : "#388E3C")"
+                                stroke="#FFFFFF" stroke-width="2"
+                                @onmouseenter="() => _card3HoveredIndex = index"
+                                @onmouseleave="() => _card3HoveredIndex = null"
+                                style="transition: all 0.2s ease;" />
+
+                        <circle cx="@pt.X" cy="@pt.RepaymentY" r="3" fill="#94A3B8" />
+                    }
+                </svg>
+
+                <!-- Floating Tooltip Card 3 -->
+                @if (Card3HoveredPoint != null) {
+                    <div style="@GetCard3TooltipStyle(Card3HoveredPoint)">
+                        <div style="font-weight: 800; color: #1E232A; font-size: 11px;">@Card3HoveredPoint.Label</div>
+                        <div style="color: #388E3C; font-weight: 700; font-size: 10.5px;">Disbursed: ₹@Card3HoveredPoint.DisbursementVal M</div>
+                        <div style="color: #64748B; font-weight: 600; font-size: 10px;">Repaid: ₹@Card3HoveredPoint.RepaymentVal M</div>
+                    </div>
+                }
+
+                <!-- X-Axis Labels -->
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; font-weight: 700; color: #64748B;">
+                    @foreach (var pt in ActiveCard3DataSet) {
+                        <span style="cursor: pointer; color: @(Card3HoveredPoint?.Label == pt.Label ? "#388E3C" : "#64748B"); transition: color 0.2s ease;">
+                            @pt.Label
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 4 (Row 2, Col 2): DYNAMIC & INTERACTIVE New Request Trend -->
+        <div style="@cardContainerStyle">
+            <div style="@glassRefractionStyle"></div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="@cardTitleStyle">New Request Trend</h3>
+                <span style="font-size: 11px; font-weight: 800; color: #388E3C; background: rgba(56, 142, 60, 0.1); padding: 3px 8px; border-radius: 99px;">
+                    Peak: ₹@Card4ActivePeakVal.ToString("F1")M
+                </span>
+            </div>
+
+            <!-- Interactive Toggle Legend Badges -->
+            <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0 14px 0; flex-wrap: wrap;">
+                <button style="@GetCard4BadgeStyle("Development")" @onclick='() => ToggleCard4Category("Development")'>
+                    Development
+                </button>
+                <button style="@GetCard4BadgeStyle("Invest")" @onclick='() => ToggleCard4Category("Invest")'>
+                    Invest
+                </button>
+                <button style="@GetCard4BadgeStyle("BuildHold")" @onclick='() => ToggleCard4Category("BuildHold")'>
+                    Build &amp; Hold
+                </button>
+            </div>
+
+            <!-- Comparative Dynamic Trend Lines SVG -->
+            <div style="position: relative; margin-top: 0.25rem;">
+                <svg viewBox="0 0 400 130" style="width: 100%; height: 120px; overflow: visible; cursor: pointer;">
+                    <defs>
+                        <linearGradient id="card4DevGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#388E3C" />
+                            <stop offset="50%" stop-color="#7CB342" />
+                            <stop offset="100%" stop-color="#FBC02D" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Baseline Grid -->
+                    <line x1="0" y1="110" x2="400" y2="110" stroke="rgba(0,0,0,0.06)" />
+
+                    <!-- Invest Line (Light Gray) -->
+                    @if (_card4ShowInvest) {
+                        <path d="@Card4InvestPath" fill="none" stroke="#CBD5E1" stroke-width="2.5" style="transition: all 0.3s ease;" />
+                    }
+
+                    <!-- Build & Hold Line (Light Gray Dashed) -->
+                    @if (_card4ShowBuildHold) {
+                        <path d="@Card4BuildHoldPath" fill="none" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4 4" style="transition: all 0.3s ease;" />
+                    }
+
+                    <!-- Development Line (Gradient) -->
+                    @if (_card4ShowDev) {
+                        <path d="@Card4DevPath" fill="none" stroke="url(#card4DevGradient)" stroke-width="4" stroke-linecap="round" style="transition: all 0.3s ease;" />
+                    }
+
+                    <!-- Interactive Month Nodes & Hover Events -->
+                    @for (int i = 0; i < _card4Data.Count; i++) {
+                        var item = _card4Data[i];
+                        var index = i;
+                        bool isHovered = _card4HoveredIndex == index;
+
+                        if (isHovered) {
+                            <line x1="@item.X" y1="10" x2="@item.X" y2="110" stroke="#FBC02D" stroke-width="1.5" stroke-dasharray="2 2" />
+                        }
+
+                        if (_card4ShowDev) {
+                            <circle cx="@item.X" cy="@item.DevY" r="@(isHovered ? "7" : "4")"
+                                    fill="#FBC02D" stroke="#FFFFFF" stroke-width="2"
+                                    @onmouseenter="() => _card4HoveredIndex = index"
+                                    @onmouseleave="() => _card4HoveredIndex = null"
+                                    style="transition: all 0.2s ease;" />
+                        }
+
+                        if (_card4ShowInvest) {
+                            <circle cx="@item.X" cy="@item.InvestY" r="3" fill="#CBD5E1" />
+                        }
+
+                        if (_card4ShowBuildHold) {
+                            <circle cx="@item.X" cy="@item.BuildHoldY" r="3" fill="#94A3B8" />
+                        }
+                    }
+                </svg>
+
+                <!-- Floating Tooltip Card 4 -->
+                @if (Card4HoveredItem != null) {
+                    <div style="@GetCard4TooltipStyle(Card4HoveredItem)">
+                        <div style="font-weight: 800; color: #1E232A; font-size: 11px;">@Card4HoveredItem.Month</div>
+                        @if (_card4ShowDev) {
+                            <div style="color: #388E3C; font-weight: 700; font-size: 10.5px;">Dev: ₹@Card4HoveredItem.DevVal M</div>
+                        }
+                        @if (_card4ShowInvest) {
+                            <div style="color: #64748B; font-weight: 600; font-size: 10px;">Invest: ₹@Card4HoveredItem.InvestVal M</div>
+                        }
+                        @if (_card4ShowBuildHold) {
+                            <div style="color: #94A3B8; font-weight: 600; font-size: 10px;">Build &amp; Hold: ₹@Card4HoveredItem.BuildHoldVal M</div>
+                        }
+                    </div>
+                }
+
+                <!-- X-Axis Labels -->
+                <div style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; font-weight: 700; color: #64748B;">
+                    @foreach (var item in _card4Data) {
+                        <span style="cursor: pointer; color: @(Card4HoveredItem?.Month == item.Month ? "#388E3C" : "#64748B"); transition: color 0.2s ease;">
+                            @item.Month
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private string _selectedDateRange = "Jul 26 - Aug 26, 2026";
+
+    // Quicksand Font Stack
+    private string fontFamily = "'Quicksand', system-ui, -apple-system, sans-serif";
+
+    // Pantone Color Tokens
+    private string slateBlack = "#1E232A";
+    private string slateGray = "#64748B";
+    private string lightGray = "#E2E8F0";
+
+    private string pantoneTripleGradient = "linear-gradient(135deg, #388E3C 0%, #7CB342 50%, #FBC02D 100%)";
+
+    private List<StateRevenueItem> _stateRevenues = new()
+    {
+        new("MH", "18.6M"),
+        new("GH", "3.9M"),
+        new("WB", "3.2M"),
+        new("KA", "2.2M")
+    };
+
+    private void OnDateRangeChanged(ChangeEventArgs e)
+    {
+        _selectedDateRange = e.Value?.ToString() ?? _selectedDateRange;
+    }
+
+    // -------------------------------------------------------------
+    // CARD 3: DYNAMIC & INTERACTIVE LOGIC
+    // -------------------------------------------------------------
+    private string _card3TimeRange = "1M";
+    private int? _card3HoveredIndex = null;
+
+    private List<Card3Point> ActiveCard3DataSet => _card3DataSets[_card3TimeRange];
+    private double Card3TotalDisbursements => ActiveCard3DataSet.Sum(p => p.DisbursementVal);
+    private Card3Point? Card3HoveredPoint => _card3HoveredIndex.HasValue && _card3HoveredIndex.Value < ActiveCard3DataSet.Count ? ActiveCard3DataSet[_card3HoveredIndex.Value] : null;
+
+    private string Card3DisbursementPath => "M " + string.Join(" L ", ActiveCard3DataSet.Select(p => $"{p.X} {p.DisbursementY}"));
+    private string Card3RepaymentPath => "M " + string.Join(" L ", ActiveCard3DataSet.Select(p => $"{p.X} {p.RepaymentY}"));
+    private string Card3AreaPoints => $"0,130 {string.Join(" ", ActiveCard3DataSet.Select(p => $"{p.X},{p.DisbursementY}"))} 400,130";
+
+    private readonly Dictionary<string, List<Card3Point>> _card3DataSets = new()
+    {
+        ["1M"] = new()
+        {
+            new(0, 80, 100, 4.2, 2.1, "Week 1"),
+            new(133, 45, 80, 8.5, 3.8, "Week 2"),
+            new(266, 90, 110, 3.1, 1.9, "Week 3"),
+            new(400, 20, 50, 12.4, 6.2, "Week 4")
+        },
+        ["3M"] = new()
+        {
+            new(0, 95, 115, 2.8, 1.2, "June"),
+            new(133, 30, 70, 10.2, 4.5, "July"),
+            new(266, 60, 90, 6.8, 3.1, "August"),
+            new(400, 35, 60, 9.8, 5.0, "Sept")
+        },
+        ["YTD"] = new()
+        {
+            new(0, 105, 120, 1.9, 0.8, "Q1"),
+            new(133, 50, 85, 7.5, 3.2, "Q2"),
+            new(266, 25, 65, 11.1, 5.4, "Q3"),
+            new(400, 15, 40, 13.5, 7.1, "Q4")
+        }
+    };
+
+    private void ChangeCard3Range(string range)
+    {
+        _card3TimeRange = range;
+        _card3HoveredIndex = null;
+    }
+
+    private string GetCard3RangeBtnStyle(string range)
+    {
+        bool isActive = _card3TimeRange == range;
+        return $@"
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: none;
+            background: {(isActive ? "#FFFFFF" : "transparent")};
+            color: {(isActive ? "#388E3C" : "#64748B")};
+            font-family: {fontFamily};
+            font-size: 10.5px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: {(isActive ? "0 2px 6px rgba(0,0,0,0.06)" : "none")};
+            transition: all 0.2s ease;
+        ";
+    }
+
+    private string GetCard3TooltipStyle(Card3Point pt)
+    {
+        int leftPos = pt.X > 300 ? pt.X - 110 : (pt.X < 50 ? pt.X + 10 : pt.X - 45);
+        return $@"
+            position: absolute;
+            top: {pt.DisbursementY - 55}px;
+            left: {leftPos}px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 142, 60, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            pointer-events: none;
+            z-index: 10;
+            transition: all 0.15s ease;
+        ";
+    }
+
+    // -------------------------------------------------------------
+    // CARD 4: DYNAMIC & INTERACTIVE LOGIC
+    // -------------------------------------------------------------
+    private bool _card4ShowDev = true;
+    private bool _card4ShowInvest = true;
+    private bool _card4ShowBuildHold = true;
+    private int? _card4HoveredIndex = null;
+
+    private Card4Point? Card4HoveredItem => _card4HoveredIndex.HasValue && _card4HoveredIndex.Value < _card4Data.Count ? _card4Data[_card4HoveredIndex.Value] : null;
+    private double Card4ActivePeakVal => _card4Data.Max(d => d.DevVal);
+
+    private string Card4DevPath => "M " + string.Join(" L ", _card4Data.Select(p => $"{p.X} {p.DevY}"));
+    private string Card4InvestPath => "M " + string.Join(" L ", _card4Data.Select(p => $"{p.X} {p.InvestY}"));
+    private string Card4BuildHoldPath => "M " + string.Join(" L ", _card4Data.Select(p => $"{p.X} {p.BuildHoldY}"));
+
+    private readonly List<Card4Point> _card4Data = new()
+    {
+        new(0, 85, 90, 105, "May", 6.2, 4.1, 2.5),
+        new(133, 20, 80, 100, "Jun", 14.8, 5.2, 3.0),
+        new(266, 50, 95, 85, "Jul", 10.4, 3.8, 4.6),
+        new(400, 15, 70, 90, "Aug", 16.5, 6.0, 4.0)
+    };
+
+    private void ToggleCard4Category(string cat)
+    {
+        if (cat == "Development") _card4ShowDev = !_card4ShowDev;
+        if (cat == "Invest") _card4ShowInvest = !_card4ShowInvest;
+        if (cat == "BuildHold") _card4ShowBuildHold = !_card4ShowBuildHold;
+    }
+
+    private string GetCard4BadgeStyle(string cat)
+    {
+        bool isActive = cat switch
+        {
+            "Development" => _card4ShowDev,
+            "Invest" => _card4ShowInvest,
+            "BuildHold" => _card4ShowBuildHold,
+            _ => false
+        };
+
+        if (cat == "Development") {
+            return $@"
+                padding: 5px 14px;
+                border-radius: 99px;
+                border: none;
+                background: {(isActive ? pantoneTripleGradient : lightGray)};
+                color: {(isActive ? "#1E232A" : "#64748B")};
+                font-family: {fontFamily};
+                font-size: 11.5px;
+                font-weight: 800;
+                box-shadow: {(isActive ? "0 2px 8px rgba(56, 142, 60, 0.25)" : "none")};
+                cursor: pointer;
+                transition: all 0.2s ease;
+            ";
+        }
+
+        return $@"
+            padding: 5px 14px;
+            border-radius: 99px;
+            border: none;
+            background: {(isActive ? "rgba(100, 116, 139, 0.2)" : lightGray)};
+            color: {(isActive ? "#1E232A" : "#94A3B8")};
+            font-family: {fontFamily};
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        ";
+    }
+
+    private string GetCard4TooltipStyle(Card4Point item)
+    {
+        int leftPos = item.X > 300 ? item.X - 110 : (item.X < 50 ? item.X + 10 : item.X - 45);
+        return $@"
+            position: absolute;
+            top: {item.DevY - 50}px;
+            left: {leftPos}px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 142, 60, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            pointer-events: none;
+            z-index: 10;
+            transition: all 0.15s ease;
+        ";
+    }
+
+    // Static Styles
+    private string pageContainerStyle => $"max-width: 1400px; margin: 0 auto; padding: 1.5rem 0; font-family: {fontFamily};";
+
+    private string headerSectionStyle = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;";
+    private string headingStyle => $"font-size: 2.25rem; font-weight: 800; color: {slateBlack}; margin: 0; letter-spacing: -0.5px;";
+
+    private string dateDropdownStyle => $@"
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(100, 116, 139, 0.2);
+        border-radius: 10px;
+        color: {slateGray};
+        font-family: {fontFamily};
+        font-size: 0.95rem;
+        font-weight: 700;
+        padding: 6px 12px;
+        outline: none;
+        cursor: pointer;
+    ";
+
+    private string metricWidgetBoxStyle => $@"
+        padding: 12px 18px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(100, 116, 139, 0.15);
+        box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+        min-width: 180px;
+    ";
+
+    private string metricNumberStyle => $"font-size: 1.75rem; font-weight: 800; color: {slateBlack}; margin: 0; line-height: 1;";
+    private string metricLabelStyle => $"font-size: 0.85rem; font-weight: 700; color: {slateGray}; margin: 4px 0 0 0;";
+
+    private string valueBadgeStyle => $@"
+        padding: 4px 10px;
+        border-radius: 99px;
+        background: #FFFFFF;
+        color: {slateBlack};
+        font-size: 11.5px;
+        font-weight: 800;
+        border: 1px solid rgba(100, 116, 139, 0.15);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        white-space: nowrap;
+    ";
+
+    private string mapBadgeStyle => $@"
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        color: #1E232A;
+        font-family: {fontFamily};
+        font-size: 10px;
+        font-weight: 800;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        border: 1px solid rgba(255, 255, 255, 1);
+        white-space: nowrap;
+    ";
+
+    private string keyframeStyles = @"
+        @keyframes pulseRed {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+        @keyframes pulseOrange {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(2.0); opacity: 0; }
+        }
+        @keyframes pulseGreen {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+    ";
+
+    private string gridContainerStyle = "display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;";
+
+    private string cardContainerStyle => $@"
+        position: relative;
+        padding: 1.75rem;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(56, 142, 60, 0.12);
+        box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    ";
+
+    private string glassRefractionStyle = "position: absolute; top: 0; left: 10%; right: 10%; height: 1.5px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0) 100%); pointer-events: none;";
+    private string cardTitleStyle => $"font-size: 1.2rem; font-weight: 800; color: {slateBlack}; margin: 0;";
+
+    private string dashedLineStyle = "flex-grow: 1; margin: 0 12px; border-bottom: 1.5px dashed rgba(100, 116, 139, 0.25); transform: translateY(-2px);";
+
+    private string mapContainerStyle = "display: flex; align-items: center; justify-content: center; background: rgba(245, 248, 245, 0.6); border-radius: 16px; padding: 12px; border: 1px solid rgba(148, 163, 184, 0.15); min-height: 190px;";
+
+    // Records
+    public record StateRevenueItem(string StateName, string FormattedAmount);
+    public record Card3Point(int X, int DisbursementY, int RepaymentY, double DisbursementVal, double RepaymentVal, string Label);
+    public record Card4Point(int X, int DevY, int InvestY, int BuildHoldY, string Month, double DevVal, double InvestVal, double BuildHoldVal);
+}
+

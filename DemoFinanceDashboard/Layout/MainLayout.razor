@@ -1,0 +1,157 @@
+﻿@using DemoFinanceDashboard.Components
+
+@inherits LayoutComponentBase
+
+<div style="@pageLayoutContainerStyle">
+    <!-- Ambient Depth Background Orbs -->
+    <div style="@ambientGlowPrimaryStyle"></div>
+    <div style="@ambientGlowSecondaryStyle"></div>
+    <div style="@ambientGlowTertiaryStyle"></div>
+
+    <!-- Glassmorphic Sidebar Surface -->
+    <aside style="@sidebarContainerStyle">
+        <NavMenu />
+    </aside>
+
+    <!-- Main Workspace Surface -->
+    <main style="@mainAreaStyle">
+        <!-- Interactive Glass Header Bar -->
+        <header style="@topHeaderRowStyle">
+            <!-- Left Header Badge -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="@statusBadgeStyle">
+                    <span style="@statusDotStyle"></span>
+                    <span>System Active</span>
+                </span>
+            </div>
+
+            <!-- Right Header Action Capsule Buttons & Flyouts Container -->
+            <div style="display: flex; align-items: center; gap: 12px; position: relative;">
+                <NavLink href="about"
+                         style="@GetHeaderCapsuleStyle(_isAboutHovered)"
+                         @onmouseenter="() => _isAboutHovered = true"
+                         @onmouseleave="() => _isAboutHovered = false">
+
+                    <div style="@glassRefractionLineStyle"></div>
+                    <i class="bi bi-info-circle-fill" style="@GetIconStyle(_isAboutHovered)" aria-hidden="true"></i>
+                    <span style="@GetLabelTextStyle(_isAboutHovered)">About</span>
+                </NavLink>
+
+                <!-- Notification Quick Pill Button -->
+                <div style="@notificationCircleStyle" title="Notifications" @onclick="ToggleNotifications">
+                    <i class="bi bi-bell-fill" style="font-size: 15px; color: #1E232A;"></i>
+                    @if (_unreadNotificationCount > 0) {
+                        <span style="@notifBadgeDotStyle"></span>
+                    }
+                </div>
+
+                <!-- Notification Drawer Component -->
+                <Notification @bind-IsOpen="_isNotificationOpen"
+                              UnreadCountChanged="HandleUnreadCountChanged" />
+            </div>
+        </header>
+
+        <!-- Main Body Canvas -->
+        <article style="@mainContentBodyStyle">
+            @Body
+        </article>
+    </main>
+</div>
+
+<!-- Floating Blazor Error Toast Notification -->
+<div id="blazor-error-ui" style="@errorUiStyle" data-nosnippet>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="bi bi-exclamation-triangle-fill" style="font-size: 18px;"></span>
+        <span style="font-weight: 700; font-size: 13.5px;">An unexpected runtime exception occurred.</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; margin-left: auto;">
+        <a href="." style="@errorReloadLinkStyle">Reload</a>
+        <span style="cursor: pointer; opacity: 0.9; font-weight: bold; font-size: 16px;" onclick="document.getElementById('blazor-error-ui').style.display='none'">🗙</span>
+    </div>
+</div>
+
+@code {
+    private bool _isAboutHovered;
+    private bool _isNotificationOpen = false;
+    private int _unreadNotificationCount = 3;
+
+    private const string fontFamily = "'Quicksand', system-ui, -apple-system, sans-serif";
+
+    private void ToggleNotifications()
+    {
+        _isNotificationOpen = !_isNotificationOpen;
+    }
+
+    private void HandleUnreadCountChanged(int count)
+    {
+        _unreadNotificationCount = count;
+    }
+
+    // Page Layout Surfaces & Ambient Backgrounds
+    private string pageLayoutContainerStyle => $@"
+        position: relative;
+        display: flex;
+        min-height: 100vh;
+        font-family: {fontFamily};
+        background-color: #F4F7F4;
+        color: #1E232A;
+        overflow: hidden;
+    ";
+
+    private string ambientGlowPrimaryStyle = "position: absolute; top: -120px; right: -80px; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(124, 179, 66, 0.18) 0%, rgba(244, 247, 244, 0) 70%); pointer-events: none; z-index: 0;";
+    private string ambientGlowSecondaryStyle = "position: absolute; bottom: -160px; left: 100px; width: 650px; height: 650px; border-radius: 50%; background: radial-gradient(circle, rgba(251, 192, 45, 0.15) 0%, rgba(244, 247, 244, 0) 70%); pointer-events: none; z-index: 0;";
+    private string ambientGlowTertiaryStyle = "position: absolute; top: 40%; left: -100px; width: 450px; height: 450px; border-radius: 50%; background: radial-gradient(circle, rgba(93, 64, 55, 0.08) 0%, rgba(244, 247, 244, 0) 70%); pointer-events: none; z-index: 0;";
+
+    private string sidebarContainerStyle = "width: 270px; background: rgba(140, 200, 190, 1); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-right: 2px solid rgba(180, 240, 160, 1); flex-shrink: 0; box-shadow: 4px 0 24px rgba(56, 142, 60, 0.04); z-index: 10;";
+    private string mainAreaStyle = "flex-grow: 1; display: flex; flex-direction: column; z-index: 1; min-width: 0;";
+    private string topHeaderRowStyle = "height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%); border-bottom: 1px solid rgba(56, 142, 60, 0.12); position: sticky; top: 0; z-index: 10;";
+    private string mainContentBodyStyle = "padding: 2.25rem 2.5rem; flex-grow: 1; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; overflow-y: auto; height: calc(100vh - 70px);";
+
+    // Header Elements
+    private string statusBadgeStyle = "display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 99px; background: rgba(56, 142, 60, 0.1); color: #388E3C; font-weight: 800; font-size: 12px; border: 1px solid rgba(56, 142, 60, 0.18);";
+    private string statusDotStyle = "width: 7px; height: 7px; border-radius: 50%; background-color: #388E3C; box-shadow: 0 0 8px #388E3C;";
+    private string glassRefractionLineStyle = "position: absolute; top: 0; left: 12%; right: 12%; height: 1.5px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0) 100%); pointer-events: none; z-index: 3;";
+
+    private string notificationCircleStyle => @"
+        position: relative;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(56, 142, 60, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        transition: all 0.2s ease;
+    ";
+
+    private string notifBadgeDotStyle = "position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background-color: #FBC02D; border: 1.5px solid #FFFFFF;";
+
+    private string GetHeaderCapsuleStyle(bool isHovered)
+    {
+        string bg = isHovered ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.8)";
+        string border = isHovered ? "rgba(124, 179, 66, 0.4)" : "rgba(56, 142, 60, 0.18)";
+        string shadow = isHovered ? "0 8px 24px -2px rgba(56, 142, 60, 0.18)" : "0 4px 12px rgba(0, 0, 0, 0.04)";
+        string transform = isHovered ? "translateY(-1px) scale(1.02)" : "translateY(0px) scale(1)";
+
+        return $"position: relative; display: flex; align-items: center; text-decoration: none; padding: 8px 18px; border-radius: 99px; background: {bg}; border: 1px solid {border}; box-shadow: {shadow}; transform: {transform}; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; overflow: hidden;";
+    }
+
+    private string GetIconStyle(bool isHovered)
+    {
+        string color = isHovered ? "#388E3C" : "#5D4037";
+        return $"font-size: 16px; color: {color} !important; transition: color 0.25s ease; margin-right: 6px;";
+    }
+
+    private string GetLabelTextStyle(bool isHovered)
+    {
+        string color = isHovered ? "#388E3C" : "#1E232A";
+        return $"color: {color}; font-weight: 800; font-size: 13px; letter-spacing: 0.2px; transition: color 0.25s ease;";
+    }
+
+    private string errorUiStyle = "display: none; position: fixed; bottom: 24px; right: 24px; border-radius: 16px; background: rgba(93, 64, 55, 0.95); backdrop-filter: blur(16px); color: #FFFFFF; align-items: center; justify-content: space-between; padding: 14px 20px; box-shadow: 0 12px 36px rgba(93, 64, 55, 0.3); z-index: 1000; min-width: 360px;";
+    private string errorReloadLinkStyle = "color: #FFFFFF; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; text-decoration: underline; padding: 4px 10px; background: rgba(255, 255, 255, 0.15); border-radius: 6px;";
+}

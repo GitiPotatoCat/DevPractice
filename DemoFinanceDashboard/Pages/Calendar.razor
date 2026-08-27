@@ -1,0 +1,423 @@
+﻿@page "/calendar"
+
+<PageTitle>Smart Calendar Workspace</PageTitle>
+
+<div style="@pageContainerStyle">
+    <!-- Top Header Bar -->
+    <header style="@headerSectionStyle">
+        <!-- Left Upper Greeting Block -->
+        <div>
+            <!-- Dynamic Time-Based Greeting -->
+            <h2 style="@greetingHeadingStyle">@GetGreeting(), @_username</h2>
+            <p style="@agendaSubtextStyle">Here's what's on your agenda today.</p>
+        </div>
+
+        <!-- Right Upper Header Actions (Search & Notification) -->
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <!-- Glassmorphic Search Bar -->
+            <div style="@searchContainerStyle">
+                <span class="bi bi-search" style="@searchIconStyle"></span>
+                <input type="text"
+                       placeholder="Search for some activities"
+                       @bind="_searchQuery"
+                       style="@searchInputStyle" />
+            </div>
+
+            <!-- Glass Notification Icon Button -->
+            <div style="@notificationBtnStyle"
+                 @onmouseenter="() => _isNotifHovered = true"
+                 @onmouseleave="() => _isNotifHovered = false">
+                <span class="bi bi-bell-fill" style="@notificationIconStyle"></span>
+                <span style="@notifBadgeDotStyle"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Glassmorphic Calendar Card (75% / 25% Grid) -->
+    <div style="@mainCalendarCardStyle">
+        <!-- Refraction Specular Prism Line -->
+        <div style="@glassRefractionStyle"></div>
+
+        <div style="@twoColumnGridStyle">
+            <!-- =================================================== -->
+            <!-- LEFT COLUMN: Main Monthly Interactive Calendar (75%) -->
+            <!-- =================================================== -->
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <!-- Left Upper Header: Month/Year Dropdowns & Nav Arrows -->
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <h3 style="@dropdownHeadingContainerStyle">
+                            <!-- Month Select -->
+                            <select value="@_currentDate.Month" @onchange="OnMonthChanged" style="@dropdownSelectStyle">
+                                @for (int i = 1; i <= 12; i++) {
+                                    <option value="@i">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+                                }
+                            </select>
+
+                            <!-- Year Select -->
+                            <select value="@_currentDate.Year" @onchange="OnYearChanged" style="@dropdownSelectStyle">
+                                @for (int y = DateTime.Now.Year - 2; y <= DateTime.Now.Year + 3; y++) {
+                                    <option value="@y">@y</option>
+                                }
+                            </select>
+                        </h3>
+                    </div>
+
+                    <!-- Navigation Arrows -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button style="@arrowBtnStyle" @onclick="PreviousMonth" title="Previous Month">
+                            <i class="bi bi-arrow-left-circle" style="font-size: 24px;"></i>
+                        </button>
+                        <button style="@arrowBtnStyle" @onclick="NextMonth" title="Next Month">
+                            <i class="bi bi-arrow-right-circle" style="font-size: 24px;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Days of Week Header -->
+                <div style="@daysHeaderGridStyle">
+                    @foreach (var dayName in _dayNames) {
+                        <div style="@dayNameLabelStyle">@dayName</div>
+                    }
+                </div>
+
+                <!-- Monthly Calendar Grid (7 Columns x 5 Rows) -->
+                <div style="@calendarMonthGridStyle">
+                    @foreach (var day in _calendarDays) {
+                        <div style="@GetCalendarDayCardStyle(day)"
+                             @onclick="() => SelectDay(day)">
+                            <h4 style="@dayNumberTextStyle(day)">@day.Date.Day</h4>
+
+                            @if (day.HasActivities) {
+                                <div style="@activityIndicatorDotStyle"></div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- RIGHT COLUMN: Main Calendar Schedule Area (25%)      -->
+            <!-- ==================================================== -->
+            <div style="@rightColumnContainerStyle">
+                <!-- Schedule Header Row -->
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px dashed rgba(124, 179, 66, 0.4); padding-bottom: 1rem;">
+                    <div>
+                        <h4 style="@scheduleHeadingStyle">Scheduled</h4>
+                        <p style="@scheduleDateSubtextStyle">@_selectedDate.ToString("dd, MMMM, yyyy")</p>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <i class="bi bi-calendar-event" style="font-size: 14px; color: #1C1D1F;"></i>
+                        <i class="bi bi-chevron-left" style="font-size: 12px; color: #1C1D1F; cursor: pointer;" @onclick="() => SelectDayByOffset(-1)"></i>
+                        <i class="bi bi-chevron-right" style="font-size: 12px; color: #1C1D1F; cursor: pointer;" @onclick="() => SelectDayByOffset(1)"></i>
+                    </div>
+                </div>
+
+                <!-- Schedule Row Cards Separated by Dashed Lines -->
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.25rem;">
+                    <!-- First Row Card: Lesson Learning -->
+                    <div style="@scheduleRowCardStyle">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="@scheduleTagStyle">Education</span>
+                            <span style="@scheduleTimeStyle">09:00 AM</span>
+                        </div>
+                        <h5 style="@scheduleTitleStyle">Lesson Learning</h5>
+                        <p style="@scheduleDescStyle">UI/UX Glassmorphism & Advanced Micro-interactions</p>
+                    </div>
+
+                    <div style="@dashedDividerStyle"></div>
+
+                    <!-- Second Row Card: Meeting (Gmeet & Teams icons) -->
+                    <div style="@scheduleRowCardStyle">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="@scheduleTagStyle">Client Sync</span>
+                            <span style="@scheduleTimeStyle">01:30 PM</span>
+                        </div>
+                        <h5 style="@scheduleTitleStyle">Meeting</h5>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px;">
+                            <!-- Google Meet Icon -->
+                            <div style="@platformIconBadgeStyle" title="Google Meet">
+                                <i class="bi bi-camera-video-fill" style="color: #00832D; font-size: 13px;"></i>
+                            </div>
+                            <!-- Microsoft Teams Icon -->
+                            <div style="@platformIconBadgeStyle" title="Microsoft Teams">
+                                <i class="bi bi-microsoft-teams" style="color: #464EB8; font-size: 13px;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="@dashedDividerStyle"></div>
+
+                    <!-- Third Row Card: Team sync call -->
+                    <div style="@scheduleRowCardStyle">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="@scheduleTagStyle">Internal</span>
+                            <span style="@scheduleTimeStyle">04:45 PM</span>
+                        </div>
+                        <h5 style="@scheduleTitleStyle">Team sync call</h5>
+                        <p style="@scheduleDescStyle">Daily Sprint Huddle & Task Progress Review</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _username = "Alex";
+    private string _searchQuery = string.Empty;
+    private bool _isNotifHovered = false;
+
+    private DateTime _currentDate = DateTime.Now;
+    private DateTime _selectedDate = DateTime.Now;
+
+    // Quicksand Font Stack
+    private string fontFamily = "'Quicksand', system-ui, -apple-system, sans-serif";
+
+    // -------------------------------------------------------------
+    // Pantone Color Palette Tokens & Gradients
+    // -------------------------------------------------------------
+    // Greeting Gradient: Pantone Leaf Green (#388E3C), Lime Green (#7CB342), Light Gold (#FBC02D)
+    private string greetingGradient = "linear-gradient(135deg, #388E3C 0%, #7CB342 50%, #FBC02D 100%)";
+
+    // Subtitle Color: Pantone Slate Titanium Brown
+    private string slateTitaniumBrown = "#5A524C";
+
+    // Calendar Glassmorphic Base Gradient: Pantone Slate Light Black (#1E232A) to Pantone Slate Lime Green (#2D3B2D)
+    private string mainCardGlassGradient = "linear-gradient(135deg, rgba(30, 35, 42, 0.88) 0%, rgba(45, 59, 45, 0.92) 100%)";
+
+    // Calendar Day Card Gradient: Pantone Lime Green (#7CB342) to Light Gold (#FBC02D)
+    private string dayCardGradient = "linear-gradient(135deg, rgba(124, 179, 66, 0.25) 0%, rgba(251, 192, 45, 0.3) 100%)";
+
+    // Schedule Card & Dashed Line Gradient: Pantone Lime Green (#7CB342) to Light Gold (#FBC02D)
+    private string scheduleCardGradient = "linear-gradient(135deg, rgba(124, 179, 66, 0.18) 0%, rgba(251, 192, 45, 0.22) 100%)";
+
+    // Neutral Text Colors
+    private string slateBlack = "#1C1D1F"; // Pantone Slate Black
+    private string lightBlack = "#2C2D30"; // Pantone Light Black
+
+    private readonly string[] _dayNames = new[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+    private List<CalendarDay> _calendarDays = new();
+
+    protected override void OnInitialized()
+    {
+        GenerateCalendarGrid();
+    }
+
+    // -------------------------------------------------------------
+    // Time-based Greeting Helper
+    // -------------------------------------------------------------
+    private string GetGreeting()
+    {
+        int hour = DateTime.Now.Hour;
+        if (hour >= 5 && hour < 12) return "Good Morning";
+        if (hour >= 12 && hour < 17) return "Good Afternoon";
+        if (hour >= 17 && hour < 22) return "Good Evening";
+        return "Good Night";
+    }
+
+    // -------------------------------------------------------------
+    // Calendar Generation Logic
+    // -------------------------------------------------------------
+    private void GenerateCalendarGrid()
+    {
+        _calendarDays.Clear();
+        DateTime firstDayOfMonth = new DateTime(_currentDate.Year, _currentDate.Month, 1);
+        int dayOfWeekOffset = (int)firstDayOfMonth.DayOfWeek;
+
+        // Calculate start date for 5-week (35 days) grid
+        DateTime startDate = firstDayOfMonth.AddDays(-dayOfWeekOffset);
+
+        for (int i = 0; i < 35; i++) {
+            DateTime dayDate = startDate.AddDays(i);
+            bool isCurrentMonth = dayDate.Month == _currentDate.Month;
+            bool isToday = dayDate.Date == DateTime.Today;
+            bool hasActivities = (dayDate.Day % 3 == 0 || dayDate.Day % 7 == 0) && isCurrentMonth;
+
+            _calendarDays.Add(new CalendarDay(dayDate, isCurrentMonth, isToday, hasActivities));
+        }
+    }
+
+    private void PreviousMonth()
+    {
+        _currentDate = _currentDate.AddMonths(-1);
+        GenerateCalendarGrid();
+    }
+
+    private void NextMonth()
+    {
+        _currentDate = _currentDate.AddMonths(1);
+        GenerateCalendarGrid();
+    }
+
+    private void OnMonthChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int month)) {
+            _currentDate = new DateTime(_currentDate.Year, month, 1);
+            GenerateCalendarGrid();
+        }
+    }
+
+    private void OnYearChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int year)) {
+            _currentDate = new DateTime(year, _currentDate.Month, 1);
+            GenerateCalendarGrid();
+        }
+    }
+
+    private void SelectDay(CalendarDay day)
+    {
+        _selectedDate = day.Date;
+    }
+
+    private void SelectDayByOffset(int days)
+    {
+        _selectedDate = _selectedDate.AddDays(days);
+    }
+
+    // -------------------------------------------------------------
+    // Page & Glassmorphic Styles
+    // -------------------------------------------------------------
+    private string pageContainerStyle => $"max-width: 1400px; margin: 0 auto; padding: 1.5rem 0; font-family: {fontFamily};";
+
+    private string headerSectionStyle = "display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem;";
+
+    private string greetingHeadingStyle => $@"
+        font-size: 2.25rem;
+        font-weight: 800;
+        margin: 0 0 0.25rem 0;
+        background: {greetingGradient};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    ";
+
+    private string agendaSubtextStyle => $"font-size: 1rem; color: {slateTitaniumBrown}; font-weight: 600; margin: 0;";
+
+    // Header Search & Notification
+    private string searchContainerStyle => $@"
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        border-radius: 99px;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        width: 260px;
+    ";
+
+    private string searchIconStyle = "font-size: 14px; color: #2C2D30; opacity: 0.7;";
+    private string searchInputStyle => $"border: none; background: transparent; outline: none; font-family: {fontFamily}; font-size: 13px; color: #1C1D1F; font-weight: 600; width: 100%;";
+
+    private string notificationBtnStyle => $@"
+        position: relative;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s ease;
+        transform: {(_isNotifHovered ? "scale(1.05)" : "scale(1)")};
+    ";
+
+    private string notificationIconStyle = "font-size: 16px; color: #2C2D30;";
+    private string notifBadgeDotStyle = "position: absolute; top: 10px; right: 10px; width: 7px; height: 7px; border-radius: 50%; background-color: #7CB342; border: 1.5px solid #FFFFFF;";
+
+    // Main 2-Column Calendar Card
+    private string mainCalendarCardStyle => $@"
+        position: relative;
+        padding: 2rem;
+        border-radius: 28px;
+        background: {mainCardGlassGradient};
+        backdrop-filter: blur(28px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.25);
+        color: #FFFFFF;
+        overflow: hidden;
+    ";
+
+    private string glassRefractionStyle = "position: absolute; top: 0; left: 8%; right: 8%; height: 1.5px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0) 100%); pointer-events: none;";
+
+    private string twoColumnGridStyle = "display: grid; grid-template-columns: 3fr 1fr; gap: 2rem; align-items: start;";
+
+    // Dropdown Header Controls
+    private string dropdownHeadingContainerStyle = "display: flex; align-items: center; gap: 8px; margin: 0;";
+    private string dropdownSelectStyle => $"background: rgba(127, 146, 102, 0.8); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 10px; color: #FFFFFF; font-family: {fontFamily}; font-size: 1.15rem; font-weight: 700; padding: 4px 10px; outline: none; cursor: pointer;";
+
+    private string arrowBtnStyle = "background: transparent; border: none; color: #FFFFFF; cursor: pointer; padding: 0; display: flex; align-items: center; opacity: 0.9;";
+
+    // Calendar Grid Styles
+    private string daysHeaderGridStyle = "display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center;";
+    private string dayNameLabelStyle = "font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.6); text-transform: uppercase; letter-spacing: 0.5px;";
+
+    private string calendarMonthGridStyle = "display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px;";
+
+    private string GetCalendarDayCardStyle(CalendarDay day)
+    {
+        bool isSelected = day.Date.Date == _selectedDate.Date;
+        string border = isSelected ? "1.5px solid #FBC02D" : "1px solid rgba(255, 255, 255, 0.15)";
+        string opacity = day.IsCurrentMonth ? "1.0" : "0.35";
+        string transform = isSelected ? "scale(1.03)" : "scale(1)";
+
+        return $@"
+            position: relative;
+            height: 72px;
+            padding: 8px;
+            border-radius: 14px;
+            background: {dayCardGradient};
+            backdrop-filter: blur(12px);
+            border: {border};
+            opacity: {opacity};
+            transform: {transform};
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        ";
+    }
+
+    private string dayNumberTextStyle(CalendarDay day)
+    {
+        string color = day.IsToday ? "#FBC02D" : slateBlack;
+        return $"font-size: 1.1rem; font-weight: 800; color: {color}; margin: 0;";
+    }
+
+    private string activityIndicatorDotStyle = "width: 6px; height: 6px; border-radius: 50%; background: #7CB342; align-self: flex-end;";
+
+    // Right Column Schedule Styles
+    private string rightColumnContainerStyle => $"background: rgba(255, 255, 255, 0.88); border-radius: 20px; padding: 1.25rem; color: {slateBlack}; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4);";
+
+    private string scheduleHeadingStyle => $"font-size: 1.2rem; font-weight: 800; color: {lightBlack}; margin: 0;";
+    private string scheduleDateSubtextStyle => $"font-size: 11px; font-weight: 700; color: {lightBlack}; opacity: 0.7; margin: 2px 0 0 0;";
+
+    private string scheduleRowCardStyle => $@"
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: {scheduleCardGradient};
+        border: 1px solid rgba(124, 179, 66, 0.25);
+    ";
+
+    private string dashedDividerStyle = "height: 1px; border-top: 1.5px dashed rgba(124, 179, 66, 0.4); margin: 2px 0;";
+
+    private string scheduleTagStyle = "font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #388E3C; background: rgba(56, 142, 60, 0.12); padding: 2px 8px; border-radius: 99px;";
+    private string scheduleTimeStyle => $"font-size: 11px; font-weight: 700; color: {lightBlack}; opacity: 0.8;";
+
+    private string scheduleTitleStyle => $"font-size: 13.5px; font-weight: 800; color: {lightBlack}; margin: 0;";
+    private string scheduleDescStyle = "font-size: 11.5px; font-weight: 600; color: #4A6B4A; margin: 2px 0 0 0;";
+
+    private string platformIconBadgeStyle = "width: 28px; height: 28px; border-radius: 8px; background: rgba(255, 255, 255, 0.8); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.06);";
+
+    // Calendar Day DTO
+    public record CalendarDay(DateTime Date, bool IsCurrentMonth, bool IsToday, bool HasActivities);
+}

@@ -1,0 +1,245 @@
+﻿@page "/"
+
+<PageTitle>Dashboard</PageTitle>
+
+<div style="@pageContainerStyle">
+    <!-- Header Section -->
+    <header style="@headerSectionStyle">
+        <h1 style="@mainHeadingStyle">Dashboard</h1>
+        <p style="@subHeadingStyle">Plan, prioritize and accomplish your task with ease</p>
+    </header>
+
+    <!-- Row 1: 4 Metrics Cards -->
+    <div style="@rowOneGridStyle">
+        <!-- Card 1: Total Projects -->
+        <div style="@metricsCardStyle">
+            <div style="@metricsTitleStyle">Total Projects</div>
+            <div style="@metricsValueStyle">28</div>
+            <div style="@metricsStatementStyle">
+                <span class="bi bi-graph-up-arrow" style="margin-right: 4px;"></span>
+                Increased from last month
+            </div>
+        </div>
+
+        <!-- Card 2: Ended Projects -->
+        <div style="@metricsCardStyle">
+            <div style="@metricsTitleStyle">Ended Projects</div>
+            <div style="@metricsValueStyle">18</div>
+            <div style="@metricsStatementStyle">
+                <span class="bi bi-graph-up-arrow" style="margin-right: 4px;"></span>
+                Increased from last month
+            </div>
+        </div>
+
+        <!-- Card 3: Running Projects -->
+        <div style="@metricsCardStyle">
+            <div style="@metricsTitleStyle">Running Projects</div>
+            <div style="@metricsValueStyle">07</div>
+            <div style="@metricsStatementStyle">
+                <span class="bi bi-graph-up-arrow" style="margin-right: 4px;"></span>
+                Increased from last month
+            </div>
+        </div>
+
+        <!-- Card 4: Pending Project -->
+        <div style="@metricsCardStyle">
+            <div style="@metricsTitleStyle">Pending Project</div>
+            <div style="@metricsValueStyle">03</div>
+            <div style="@metricsStatementStyle">
+                <span class="bi bi-chat-dots" style="margin-right: 4px;"></span>
+                On Discuss
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: 3 Gradient Pantone Cards -->
+    <div style="@rowTwoGridStyle">
+        <!-- Card 1: Project Analytics -->
+        <div style="@gradientCardStyle">
+            <div style="@glassRefractionStyle"></div>
+            <div style="@cardHeaderStyle">
+                <h2 style="@cardTitleStyle">Project Analytics</h2>
+                <span class="bi bi-bar-chart-line-fill" style="@cardIconStyle"></span>
+            </div>
+            <div style="@cardBodyContentStyle">
+                <div style="font-size: 14px; opacity: 0.9;">Monthly Performance Overview</div>
+                <!-- Visual Mock Graphic Representation -->
+                <div style="display: flex; align-items: flex-end; gap: 8px; height: 80px; margin-top: 1.5rem;">
+                    <div style="flex: 1; height: 40%; background: rgba(255,255,255,0.25); border-radius: 6px;"></div>
+                    <div style="flex: 1; height: 75%; background: rgba(255,255,255,0.45); border-radius: 6px;"></div>
+                    <div style="flex: 1; height: 55%; background: rgba(255,255,255,0.3); border-radius: 6px;"></div>
+                    <div style="flex: 1; height: 90%; background: rgba(255,255,255,0.85); border-radius: 6px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Reminders -->
+        <div style="@gradientCardStyle">
+            <div style="@glassRefractionStyle"></div>
+            <div style="@cardHeaderStyle">
+                <h2 style="@cardTitleStyle">Reminders</h2>
+                <span class="bi bi-bell-fill" style="@cardIconStyle"></span>
+            </div>
+            <div style="@cardBodyContentStyle">
+                <div style="@reminderItemStyle">
+                    <span class="bi bi-clock-fill" style="margin-right: 8px;"></span>
+                    <span>Sprint Review at 3:00 PM</span>
+                </div>
+                <div style="@reminderItemStyle">
+                    <span class="bi bi-check-circle-fill" style="margin-right: 8px;"></span>
+                    <span>Submit UI Mockups</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Project -->
+        <div style="@gradientCardStyle">
+            <div style="@glassRefractionStyle"></div>
+            <div style="@cardHeaderStyle">
+                <h2 style="@cardTitleStyle">Project</h2>
+                <span class="bi bi-folder-fill" style="@cardIconStyle"></span>
+            </div>
+            <div style="@cardBodyContentStyle">
+                <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Task Management UI</div>
+                <div style="font-size: 13px; opacity: 0.9;">Dribbble Design Concept</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: 3 Gradient Pantone Cards -->
+    <div style="@rowThreeGridStyle">
+        <!-- Card 1: Team Collaboration -->
+        <div style="@gradientCardStyle">
+            <div style="@glassRefractionStyle"></div>
+            <div style="@cardHeaderStyle">
+                <h2 style="@cardTitleStyle">Team Collaboration</h2>
+                <span class="bi bi-people-fill" style="@cardIconStyle"></span>
+            </div>
+            <div style="@cardBodyContentStyle">
+                <div style="display: flex; gap: -8px; margin-bottom: 12px;">
+                    <div style="@avatarStyle">JD</div>
+                    <div style="@avatarStyle">AS</div>
+                    <div style="@avatarStyle">MK</div>
+                </div>
+                <div style="font-size: 13px; font-weight: 600;">3 Members active now</div>
+            </div>
+        </div>
+
+        <!-- Card 2: Project Progress -->
+        <div style="@gradientCardStyle">
+            <div style="@glassRefractionStyle"></div>
+            <div style="@cardHeaderStyle">
+                <h2 style="@cardTitleStyle">Project Progress</h2>
+                <span class="bi bi-pie-chart-fill" style="@cardIconStyle"></span>
+            </div>
+            <div style="@cardBodyContentStyle">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; font-weight: 700;">
+                    <span>Overall Completion</span>
+                    <span>78%</span>
+                </div>
+                <div style="height: 8px; border-radius: 99px; background: rgba(255, 255, 255, 0.25); overflow: hidden;">
+                    <div style="height: 100%; width: 78%; background: #FFFFFF; border-radius: 99px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Time Tracker -->
+        <div style="@gradientCardStyle">
+            <div style="@glassRefractionStyle"></div>
+            <div style="@cardHeaderStyle">
+                <h2 style="@cardTitleStyle">Time Tracker</h2>
+                <span class="bi bi-stopwatch-fill" style="@cardIconStyle"></span>
+            </div>
+            <div style="@cardBodyContentStyle">
+                <div style="font-size: 1.75rem; font-weight: 800; letter-spacing: 1px;">04:32:15</div>
+                <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">Active Session Recorded</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // Font Stack matching Quicksand
+    private string fontFamily = "'Quicksand', system-ui, -apple-system, sans-serif";
+
+    // -------------------------------------------------------------
+    // Pantone Color Palette Tokens
+    // -------------------------------------------------------------
+    // Pantone Slate / Titanium Gradient for Main Heading:
+    // Slate (#475569) to Titanium Silver (#94A3B8)
+    private string slateTitaniumGradient = "linear-gradient(135deg, #334155 0%, #64748B 50%, #94A3B8 100%)";
+
+    // Statements & Metrics:
+    // Pantone Green Statement / Metric Statement: #2E7D32
+    // Pantone Black Numeric Value: #000000
+
+    // Row 2 & Row 3 Gradient Cards Palette:
+    // Pantone Leaf Green (#388E3C), Pantone Lime Green (#7CB342), Pantone Light Gold (#FBC02D)
+    private string pantoneCardGradient = "linear-gradient(135deg, #388E3C 0%, #7CB342 50%, #FBC02D 100%)";
+
+    // -------------------------------------------------------------
+    // Layout & Card Styles
+    // -------------------------------------------------------------
+    private string pageContainerStyle => $"max-width: 1400px; margin: 0 auto; padding: 1.5rem 0; font-family: {fontFamily};";
+
+    // Header Styles
+    private string headerSectionStyle = "margin-bottom: 2rem;";
+
+    private string mainHeadingStyle => $@"
+        font-size: 2.75rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        background: {slateTitaniumGradient};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+    ";
+
+    private string subHeadingStyle = "font-size: 1.1rem; color: #2E7D32; font-weight: 600; margin: 0;";
+
+    // Row Grids
+    private string rowOneGridStyle = "display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 1.5rem;";
+    private string rowTwoGridStyle = "display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;";
+    private string rowThreeGridStyle = "display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;";
+
+    // Row 1 Metric Cards
+    private string metricsCardStyle => $@"
+        padding: 1.5rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(46, 125, 50, 0.12);
+        box-shadow: 0 4px 16px -2px rgba(46, 125, 50, 0.06);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    ";
+
+    private string metricsTitleStyle = "font-size: 0.95rem; font-weight: 700; color: #475569;";
+    private string metricsValueStyle = "font-size: 2.25rem; font-weight: 800; color: #000000; margin: 0.5rem 0;";
+    private string metricsStatementStyle = "font-size: 0.85rem; font-weight: 700; color: #2E7D32; display: flex; align-items: center;";
+
+    // Row 2 & 3 Pantone Gradient Cards
+    private string gradientCardStyle => $@"
+        position: relative;
+        padding: 1.75rem;
+        border-radius: 24px;
+        background: {pantoneCardGradient};
+        color: #FFFFFF;
+        box-shadow: 0 10px 28px -4px rgba(56, 142, 60, 0.3);
+        overflow: hidden;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    ";
+
+    private string glassRefractionStyle = "position: absolute; top: 0; left: 10%; right: 10%; height: 1.5px; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%); pointer-events: none;";
+    private string cardHeaderStyle = "display: flex; align-items: center; justify-content: space-between;";
+    private string cardTitleStyle = "font-size: 1.25rem; font-weight: 700; margin: 0; color: #FFFFFF;";
+    private string cardIconStyle = "font-size: 22px; color: rgba(255, 255, 255, 0.9) !important;";
+    private string cardBodyContentStyle = "margin-top: 1rem;";
+
+    private string reminderItemStyle = "display: flex; align-items: center; font-size: 13.5px; font-weight: 600; margin-bottom: 8px; background: rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 10px;";
+    private string avatarStyle = "width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.3); border: 2px solid #FFFFFF; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;";
+}
