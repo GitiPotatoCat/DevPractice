@@ -1,0 +1,289 @@
+{
+  "info": {
+    "_postman_id": "e43b199b-d983-4ce6-bfb6-eab7942ea4de",
+    "name": "SoapDemo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49968481",
+    "_collection_link": "https://go.postman.co/collection/49968481-e43b199b-d983-4ce6-bfb6-eab7942ea4de?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Banking",
+      "item": [
+        {
+          "name": "GetAccountInfo()",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{contentTypeValue}}",
+                "type": "text"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "{{soapBaseBank}}/GetAccountInfo",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n  <s:Body>\r\n    <GetAccountInfo xmlns=\"http://soamdemo.dev/banking\">\r\n      <accountNumber>ACC001</accountNumber>\r\n    </GetAccountInfo>\r\n  </s:Body>\r\n</s:Envelope>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{bankAccountEndpoint}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{bankAccountEndpoint}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Deposit()",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{contentTypeValue}}",
+                "type": "text"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "{{soapBaseBank}}/Deposit",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n    <s:Body>\r\n        <Deposit xmlns=\"http://soamdemo.dev/banking\">\r\n            <accountNumber>ACC001</accountNumber>\r\n            <amount>500</amount>\r\n        </Deposit>\r\n    </s:Body>\r\n</s:Envelope>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{bankAccountEndpoint}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{bankAccountEndpoint}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Withdraw",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "{{contentTypeValue}}",
+                "type": "text"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "{{soapBaseBank}}/Withdraw",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n  <s:Body>\r\n    <Withdraw xmlns=\"http://soamdemo.dev/banking\">\r\n      <accountNumber>ACC001</accountNumber>\r\n      <amount>1000</amount>\r\n    </Withdraw>\r\n  </s:Body>\r\n</s:Envelope>",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{bankAccountEndpoint}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{bankAccountEndpoint}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "This folder contains all Request Endpoints for Baking."
+    },
+    {
+      "name": "Addition",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "{{contentTypeValue}}",
+            "type": "text"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "{{soapBase}}/Addition",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n  <s:Body>\r\n    <Addition xmlns=\"https://soamdemo.dev/calculator\">\r\n      <a>15</a>\r\n      <b>27</b>\r\n    </Addition>\r\n  </s:Body>\r\n</s:Envelope>",
+          "options": {
+            "raw": {
+              "language": "xml"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/{{calculatorEndpoint}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "{{calculatorEndpoint}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Subtraction",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "{{contentTypeValue}}",
+            "type": "text"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "{{soapBase}}/Subtraction",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n  <s:Body>\r\n    <Subtraction xmlns=\"https://soamdemo.dev/calculator\">\r\n      <a>100</a>\r\n      <b>58</b>\r\n    </Subtraction>\r\n  </s:Body>\r\n</s:Envelope>\r\n",
+          "options": {
+            "raw": {
+              "language": "xml"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/{{calculatorEndpoint}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "{{calculatorEndpoint}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Multiplication",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "{{contentTypeValue}}",
+            "type": "text"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "{{soapBase}}/Multiplication",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n  <s:Body>\r\n    <Multiplication xmlns=\"https://soamdemo.dev/calculator\">\r\n      <a>6</a>\r\n      <b>7</b>\r\n    </Multiplication>\r\n  </s:Body>\r\n</s:Envelope>\r\n",
+          "options": {
+            "raw": {
+              "language": "xml"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/{{calculatorEndpoint}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "{{calculatorEndpoint}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "contentTypeValue",
+      "value": ""
+    },
+    {
+      "key": "soapBase",
+      "value": ""
+    },
+    {
+      "key": "calculatorEndpoint",
+      "value": ""
+    },
+    {
+      "key": "bankAccountEndpoint",
+      "value": ""
+    },
+    {
+      "key": "soapBaseBank",
+      "value": ""
+    }
+  ]
+}
